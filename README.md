@@ -9,7 +9,7 @@ Decentralized discovery and validation platform for Model Context Protocol (MCP)
 - **Provisioning System**: Generation of configuration standards for Claude and Cursor host environments.
 - **Protocol Standards**: Integrated documentation regarding Mesh Protocol architecture and validation logic.
 
-## Technical Implementation
+## Implementation
 
 - **Consensus Engine**: Distributed validation logic simulating multi-node verification and proof of utility.
 - **Tool Registry**: Standardized metadata repository for MCP-compliant tools.
@@ -28,8 +28,6 @@ const results = await mesh.discover({
   minConfidence: 0.75
 });
 ```
-
-## Local Execution
 
 - `npm install`
 - `npm run dev`
