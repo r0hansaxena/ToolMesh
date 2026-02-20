@@ -13,5 +13,3 @@ Decentralized discovery and validation platform for Model Context Protocol (MCP)
 
 - `npm install`
 - `npm run dev`
-
-Interface access via `http://localhost:3000`.
