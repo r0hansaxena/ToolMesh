@@ -28,6 +28,3 @@ const results = await mesh.discover({
   minConfidence: 0.75
 });
 ```
-
-- `npm install`
-- `npm run dev`
