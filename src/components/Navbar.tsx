@@ -36,7 +36,7 @@ export default function Navbar() {
 
                 <div className={styles.actions}>
                     <a
-                        href="https://github.com"
+                        href="https://github.com/r0hansaxena/ToolMesh"
                         target="_blank"
                         rel="noopener noreferrer"
                         className={styles.signInBtn}
