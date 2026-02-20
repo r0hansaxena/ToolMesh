@@ -80,6 +80,27 @@
     color: white;
 }
 
+.githubIconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+}
+
+.githubIconBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+    transform: translateY(-1px);
+}
+
 @media (max-width: 640px) {
     .links {
         gap: var(--space-md);
@@ -87,5 +108,10 @@
 
     .signInBtn {
         display: none;
+    }
+
+    .githubIconBtn {
+        width: 34px;
+        height: 34px;
     }
 }
