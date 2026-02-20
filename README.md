@@ -1,21 +1,11 @@
 # ToolMesh
 
-ToolMesh is a decentralized discovery and validation platform for Model Context Protocol (MCP) tools. It utilizes the Cortensor network to provide trust-verified tool recommendations and standardized configuration generation through distributed consensus.
+ToolMesh is a decentralized platform for the discovery, validation, and configuration of Model Context Protocol (MCP) tools. By utilizing the Cortensor inference network, the platform provides a trust-verified environment that ensures tool integrity and performance through distributed consensus.
 
-## Functionality
+## Functional Scope
 
-The platform provides a secure environment for evaluating AI tools by leveraging multiple independent validator nodes. This decentralized approach ensures that tool metadata, security parameters, and performance claims are validated before use.
-
-- **Trust-Verified Discovery**: Search and selection of MCP tools based on live consensus scores.
-- **Validation Evidence**: Transparent access to node agreement data and verification reasoning.
-- **Client Configuration**: Automated generation of configuration standards for AI hosts including Claude and Cursor.
-- **Technical Documentation**: Integrated resources detailing the Mesh Protocol architecture and decentralized validation logic.
+The platform addresses the requirements for security and reliability in the AI tool ecosystem by leveraging multiple independent validator nodes. This decentralized approach ensures that tool metadata, security parameters, and performance claims are validated prior to registration. System capabilities include the execution of search queries through a distributed network to eliminate single-model bias, provision of granular verification evidence for transparency, and the automated generation of configuration standards for primary AI host environments.
 
 ## Implementation
 
-To initialize the platform in a local environment, follow these technical procedures:
-
-1. **Environment Setup**: Ensure Node.js and npm are installed.
-2. **Dependency Resolution**: Execute `npm install` within the project root.
-3. **Application Execution**: Run `npm run dev` to start the development server.
-4. **Interface Access**: Access the application via `http://localhost:3000`.
+Platform initialization in a local environment is managed through standardized package execution. Following dependency resolution, the application layer is initialized via the development lifecycle script, after which the interface is accessible through the local host protocol.
