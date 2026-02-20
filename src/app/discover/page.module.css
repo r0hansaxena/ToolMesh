@@ -1,0 +1,134 @@
+.page {
+    min-height: calc(100vh - 60px);
+    padding: var(--space-2xl) 0;
+    position: relative;
+    z-index: 1;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.03em;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.searchSection {
+    max-width: 640px;
+    margin: 0 auto var(--space-xl);
+}
+
+.resultsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.resultsTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.resultsSubtitle {
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+}
+
+.resultsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.evidenceSection {
+    margin-top: var(--space-xl);
+    animation: fadeInUp 0.4s var(--ease-out);
+}
+
+.empty {
+    text-align: center;
+    padding: var(--space-3xl) 0;
+}
+
+.emptyText {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--space-3xl) 0;
+    max-width: 440px;
+    margin: 0 auto;
+}
+
+.emptyIcon {
+    margin-bottom: var(--space-lg);
+    opacity: 0.5;
+}
+
+.emptyTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+}
+
+.emptyDescription {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-xl);
+}
+
+.suggestions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.suggestionsLabel {
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .resultsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .resultsHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
