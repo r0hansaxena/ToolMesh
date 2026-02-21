@@ -45,12 +45,12 @@ function computeRelevance(tool: McpTool, queryTerms: string[]): number {
     const tagMatch = queryTerms.filter((t) => tool.tags.some((tag) => tag.includes(t))).length;
     const catMatch = queryTerms.some((t) => tool.category.toLowerCase().includes(t));
 
-    if (nameMatch) score += 0.35;
-    score += Math.min(0.3, descMatch * 0.1);
-    score += Math.min(0.25, tagMatch * 0.12);
-    if (catMatch) score += 0.15;
+    if (nameMatch) score += 0.45;
+    score += Math.min(0.4, descMatch * 0.15);
+    score += Math.min(0.3, tagMatch * 0.15);
+    if (catMatch) score += 0.2;
 
-    return Math.min(1, score + jitter(0.1, 0.05));
+    return Math.min(1, score + jitter(0.15, 0.05));
 }
 
 export async function runConsensus(query: string): Promise<EvidenceBundle> {
@@ -100,7 +100,7 @@ export async function runConsensus(query: string): Promise<EvidenceBundle> {
         })
     );
 
-    const filtered = consensusResults.filter((r) => r.agreementPercentage >= 30);
+    const filtered = consensusResults.filter((r) => r.agreementPercentage >= 20);
     filtered.sort((a, b) => b.confidenceScore - a.confidenceScore);
 
     const allVotes = filtered.flatMap((r) => r.votes);
