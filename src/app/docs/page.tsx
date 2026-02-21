@@ -124,7 +124,7 @@ export default function DocsPage() {
     useEffect(() => {
         const observerOptions = {
             root: null,
-            rootMargin: '-15% 0px -45% 0px',
+            rootMargin: '-20% 0px -79% 0px', // Creates a 1% "sensor line" near the top
             threshold: 0
         };
 

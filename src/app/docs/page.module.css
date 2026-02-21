@@ -76,7 +76,7 @@
 .content {
     flex: 1;
     padding: var(--space-3xl) var(--space-4xl);
-    padding-bottom: 60vh;
+    padding-bottom: 120px;
     max-width: 1000px;
     margin-left: 280px;
 }
