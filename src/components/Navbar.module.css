@@ -2,9 +2,8 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(5, 5, 8, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: var(--bg-primary);
+    /* Use opaque variable instead of rgba */
     border-bottom: 1px solid var(--border-subtle);
 }
 
