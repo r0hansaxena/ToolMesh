@@ -52,7 +52,12 @@ export class LiveContentScraper {
             }
 
             console.log(`[Scraper] Successfully parsed ${tools.length} live tools.`);
-            return tools.length > 0 ? [...tools, ...this.getFallbackTools()] : this.getFallbackTools();
+
+            // Merge with fallbacks and de-duplicate by ID
+            const allTools = [...tools, ...this.getFallbackTools()];
+            const uniqueTools = Array.from(new Map(allTools.map(t => [t.id, t])).values());
+
+            return uniqueTools;
         } catch (error) {
             console.error('[Scraper] Network error during live fetch:', error);
             return this.getFallbackTools();
