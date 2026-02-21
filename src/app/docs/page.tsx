@@ -124,7 +124,7 @@ export default function DocsPage() {
     useEffect(() => {
         const observerOptions = {
             root: null,
-            rootMargin: '-10% 0px -80% 0px',
+            rootMargin: '-15% 0px -45% 0px',
             threshold: 0
         };
 
