@@ -38,7 +38,7 @@ function ConfigureContent() {
     // Generate config whenever selection changes
     useEffect(() => {
         if (selectedToolIds.length === 0) {
-            setConfig(null);
+            if (config !== null) setConfig(null);
             return;
         }
 

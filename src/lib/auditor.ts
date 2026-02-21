@@ -37,7 +37,7 @@ export class RealTimeAuditor {
                 integrityScore += 0.03;
             }
 
-        } catch (error) {
+        } catch (_error) {
             findings.push('Network timeout during deep security scan. Falling back to signature verification.');
         }
 

@@ -104,7 +104,7 @@ const DOC_SECTIONS = [
                 <h2 className={styles.sectionTitle}>Getting <em>Started</em></h2>
                 <p className={styles.paragraph}>
                     To begin using ToolMesh, navigate to the <strong>Discover</strong> page to find tools
-                    verified by the Cortensor network. Once you find a tool, click the "Configure"
+                    verified by the Cortensor network. Once you find a tool, click the &quot;Configure&quot;
                     button to generate your setup script.
                 </p>
                 <ul className={styles.list}>
