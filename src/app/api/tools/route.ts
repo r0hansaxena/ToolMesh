@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
-import { toolsRegistry, getCategories } from '@/lib/tools-registry';
+import { LiveContentScraper } from '@/lib/scraper';
 
 export async function GET() {
+    const tools = await LiveContentScraper.fetchLiveRegistry();
+    const categories = Array.from(new Set(tools.map(t => t.category)));
+
     return NextResponse.json({
-        tools: toolsRegistry,
-        categories: getCategories(),
-        total: toolsRegistry.length,
+        tools: tools,
+        categories: categories,
+        total: tools.length,
     });
 }

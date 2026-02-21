@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getToolById } from '@/lib/tools-registry';
+import { LiveContentScraper } from '@/lib/scraper';
 import { generateConfig } from '@/lib/config-generator';
 
 export async function POST(request: NextRequest) {
@@ -14,9 +14,8 @@ export async function POST(request: NextRequest) {
         const validClients = ['claude-desktop', 'cursor', 'generic'];
         const selectedClient = validClients.includes(client) ? client : 'claude-desktop';
 
-        const tools = toolIds
-            .map((id: string) => getToolById(id))
-            .filter((t): t is NonNullable<typeof t> => t !== undefined);
+        const allTools = await LiveContentScraper.fetchLiveRegistry();
+        const tools = allTools.filter(t => toolIds.includes(t.id));
 
         if (tools.length === 0) {
             return NextResponse.json({ error: 'No valid tools found' }, { status: 400 });

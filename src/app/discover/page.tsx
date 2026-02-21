@@ -82,6 +82,12 @@ function DiscoverContent() {
                         placeholder="e.g. I need to manage databases and automate browser tasks..."
                         large
                     />
+                    {loading && (
+                        <div className={styles.liveStatus}>
+                            <span className={styles.statusDot}></span>
+                            Network active: Live scraping & auditing repositories...
+                        </div>
+                    )}
                 </div>
 
                 <ConsensusVisualizer

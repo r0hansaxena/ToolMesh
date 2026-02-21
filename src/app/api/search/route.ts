@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Query is required' }, { status: 400 });
         }
 
-        const evidence = runConsensus(query.trim());
+        const evidence = await runConsensus(query.trim());
         return NextResponse.json(evidence);
     } catch {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

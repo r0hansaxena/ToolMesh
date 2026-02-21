@@ -1,4 +1,4 @@
-import { toolsRegistry } from '@/lib/tools-registry';
+import { LiveContentScraper } from '@/lib/scraper';
 import { runConsensus } from '@/lib/consensus-engine';
 import ToolDetailClient from './ToolDetailClient';
 
@@ -6,15 +6,17 @@ interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export function generateStaticParams() {
-    return toolsRegistry.map((tool) => ({
+export async function generateStaticParams() {
+    const tools = await LiveContentScraper.fetchLiveRegistry();
+    return tools.map((tool) => ({
         id: tool.id,
     }));
 }
 
 export default async function ToolDetailPage({ params }: PageProps) {
     const { id } = await params;
-    const tool = toolsRegistry.find((t) => t.id === id);
+    const tools = await LiveContentScraper.fetchLiveRegistry();
+    const tool = tools.find((t) => t.id === id);
 
     if (!tool) {
         return (
@@ -26,7 +28,7 @@ export default async function ToolDetailPage({ params }: PageProps) {
     }
 
     // Run consensus for this specific tool
-    const evidence = runConsensus(tool.name);
+    const evidence = await runConsensus(tool.name);
     const toolResult = evidence.consensusResults.find((r) => r.toolId === tool.id);
 
     return <ToolDetailClient tool={tool} result={toolResult || null} />;
