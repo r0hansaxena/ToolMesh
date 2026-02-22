@@ -66,7 +66,7 @@ export class LiveContentScraper {
                     repository: `https://github.com/modelcontextprotocol/servers/tree/main/src/${packageId}`,
                     installCommand: `npx -y ${packageName}`,
                     configSnippet: {
-                        command: 'npx',
+                        command: 'npx.cmd',
                         args: ['-y', packageName]
                     },
                     tags: rawId.split('-').concat(this.inferCategory(name, description).toLowerCase()),
@@ -142,7 +142,7 @@ export class LiveContentScraper {
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/postgres',
                 installCommand: 'npx -y @modelcontextprotocol/server-postgres',
                 configSnippet: {
-                    command: 'npx',
+                    command: 'npx.cmd',
                     args: ['-y', '@modelcontextprotocol/server-postgres', 'postgresql://localhost:5432/postgres']
                 },
                 tags: ['sql', 'database', 'postgres'],
@@ -158,7 +158,7 @@ export class LiveContentScraper {
                 version: '1.0.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/github',
                 installCommand: 'npx -y @modelcontextprotocol/server-github',
-                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-github'] },
+                configSnippet: { command: 'npx.cmd', args: ['-y', '@modelcontextprotocol/server-github'] },
                 tags: ['git', 'github', 'development'],
                 stars: 450,
                 verified: true
@@ -172,7 +172,7 @@ export class LiveContentScraper {
                 version: '1.2.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem',
                 installCommand: 'npx -y @modelcontextprotocol/server-filesystem',
-                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem', 'C:/'] },
+                configSnippet: { command: 'npx.cmd', args: ['-y', '@modelcontextprotocol/server-filesystem', '<PATH_TO_FILES_DIR>'] },
                 tags: ['files', 'local', 'system'],
                 stars: 980,
                 verified: true
