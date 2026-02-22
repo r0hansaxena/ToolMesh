@@ -40,10 +40,8 @@ export class LiveContentScraper {
                     repository: `https://github.com/modelcontextprotocol/servers/tree/main/src/${id}`,
                     installCommand: `npx -y @modelcontextprotocol/server-${id}`,
                     configSnippet: {
-                        [id]: {
-                            command: 'npx',
-                            args: ['-y', `@modelcontextprotocol/server-${id}`]
-                        }
+                        command: 'npx',
+                        args: ['-y', `@modelcontextprotocol/server-${id}`]
                     },
                     tags: id.split('-').concat(this.inferCategory(name, description).toLowerCase()),
                     stars: Math.floor(Math.random() * 500) + 50,
@@ -76,6 +74,43 @@ export class LiveContentScraper {
     private static getFallbackTools(): McpTool[] {
         return [
             {
+                id: 'live-thirdweb',
+                name: 'Thirdweb',
+                description: 'Deploy and manage smart contracts using Thirdweb SDK.',
+                category: 'Development',
+                author: 'Thirdweb',
+                version: '1.0.2',
+                repository: 'https://github.com/thirdweb-dev/mcp-server',
+                installCommand: 'npx -y @thirdweb-dev/mcp',
+                configSnippet: {
+                    command: 'npx',
+                    args: ['-y', '@thirdweb-dev/mcp'],
+                    env: {
+                        THIRDWEB_SECRET_KEY: "<YOUR_THIRDWEB_SECRET_KEY>"
+                    }
+                },
+                tags: ['web3', 'blockchain', 'contracts'],
+                stars: 1200,
+                verified: true
+            },
+            {
+                id: 'live-postgres',
+                name: 'PostgreSQL',
+                description: 'Read and query your Postgres databases with full schema awareness.',
+                category: 'Database',
+                author: 'MCP Community',
+                version: '0.4.5',
+                repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/postgres',
+                installCommand: 'npx -y @modelcontextprotocol/server-postgres',
+                configSnippet: {
+                    command: 'npx',
+                    args: ['-y', '@modelcontextprotocol/server-postgres', 'postgresql://localhost:5432/postgres']
+                },
+                tags: ['sql', 'database', 'postgres'],
+                stars: 1100,
+                verified: true
+            },
+            {
                 id: 'live-github',
                 name: 'GitHub',
                 description: 'Manage repositories, issues, and PRs.',
@@ -84,7 +119,7 @@ export class LiveContentScraper {
                 version: '1.0.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/github',
                 installCommand: 'npx -y @modelcontextprotocol/server-github',
-                configSnippet: { github: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-github'] } },
+                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-github'] },
                 tags: ['git', 'github', 'development'],
                 stars: 450,
                 verified: true
@@ -98,7 +133,7 @@ export class LiveContentScraper {
                 version: '1.2.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem',
                 installCommand: 'npx -y @modelcontextprotocol/server-filesystem',
-                configSnippet: { filesystem: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem'] } },
+                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem'] },
                 tags: ['files', 'local', 'system'],
                 stars: 980,
                 verified: true
