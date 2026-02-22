@@ -28,6 +28,7 @@ function ConfigureContent() {
     const [visibleTools, setVisibleTools] = useState<ToolInfo[]>([]);
     const [isScanning, setIsScanning] = useState(true);
     const [copied, setCopied] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Fetch and simulate real-time discovery
     useEffect(() => {
@@ -91,6 +92,11 @@ function ConfigureContent() {
         );
     };
 
+    const filteredTools = visibleTools.filter(tool =>
+        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     const handleCopy = () => {
         if (config) {
             navigator.clipboard.writeText(JSON.stringify(config.config, null, 2));
@@ -142,6 +148,22 @@ function ConfigureContent() {
 
                         <h2 className={styles.panelTitle}>Select Tools</h2>
 
+                        {!isScanning && (
+                            <div className={styles.searchContainer}>
+                                <svg className={styles.searchIconSmall} width="16" height="16" viewBox="0 0 20 20" fill="none">
+                                    <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" strokeWidth="1.5" />
+                                    <path d="M13 13L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    className={styles.searchInput}
+                                    placeholder="Navigate the tool mesh..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        )}
+
                         <div className={styles.toolsList}>
                             {isScanning ? (
                                 <div className={styles.scanningOverlay}>
@@ -154,7 +176,7 @@ function ConfigureContent() {
                                     <div className={styles.scanSubtext}>Mesh IDs: node-alpha, node-beta, node-gamma</div>
                                 </div>
                             ) : (
-                                visibleTools.map((tool, index) => (
+                                filteredTools.map((tool, index) => (
                                     <button
                                         key={tool.id}
                                         className={`${styles.toolItem} ${selectedToolIds.includes(tool.id) ? styles.toolSelected : ''}`}
