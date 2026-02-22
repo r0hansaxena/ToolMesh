@@ -37,15 +37,22 @@ export function generateConfig(
                 }
             }
         } else if (platform === 'macos' || platform === 'linux') {
-            // Default for Unix-like systems
-            if (tool.id === 'filesystem' || tool.id === 'live-filesystem') {
+            // Default for Unix-like systems (macOS/Linux)
+            if (tool.id.includes('filesystem') || tool.name.toLowerCase().includes('filesystem')) {
                 if (Array.isArray(configSnippet.args)) {
+                    let hasPath = false;
                     configSnippet.args = configSnippet.args.map((arg: string) => {
                         if (arg === '<PATH_TO_FILES_DIR>') {
+                            hasPath = true;
                             return '~/';
                         }
                         return arg;
                     });
+
+                    // If it's a filesystem tool but doesn't have a path arg yet, add it
+                    if (!hasPath && tool.id.includes('filesystem')) {
+                        configSnippet.args.push('~/');
+                    }
                 }
             }
         }
