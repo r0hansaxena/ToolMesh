@@ -7,6 +7,25 @@ export class LiveContentScraper {
     ];
 
     /**
+     * Maps display names from the registry to their actual verified NPM package names.
+     * This prevents generating invalid npx commands for tools with non-standard naming.
+     */
+    private static KNOWN_PACKAGE_MAPPING: Record<string, string> = {
+        'postgresql': 'postgres',
+        'sqlite': 'sqlite',
+        'google-search': 'google-search',
+        'github': 'github',
+        'filesystem': 'filesystem',
+        'everything': 'everything',
+        'memory': 'memory',
+        'brave-search': 'brave-search',
+        'fetch': 'fetch',
+        'puppeteer': 'puppeteer',
+        'sentry': 'sentry',
+        'slack': 'slack',
+    };
+
+    /**
      * Fetches and parses MCP tool data from decentralized registry sources.
      * In a production environment, this would hit a more structured API or On-Chain Oracle.
      */
@@ -28,24 +47,31 @@ export class LiveContentScraper {
             while ((match = toolRegex.exec(markdown)) !== null) {
                 const name = match[1].trim();
                 const description = match[2].trim();
-                const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                const rawId = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+                // Use mapping and keyword inference to get the correct package ID
+                const packageId = this.inferPackageId(name, rawId);
+                const packageName = `@modelcontextprotocol/server-${packageId}`;
+
+                // A tool is verified if it's in our known mapping or an official server
+                const isVerified = Boolean(this.KNOWN_PACKAGE_MAPPING[rawId]) || rawId === packageId;
 
                 tools.push({
-                    id: `live-${id}`,
+                    id: `live-${packageId}`,
                     name: name,
                     description: description,
                     category: this.inferCategory(name, description),
                     author: 'MCP Community',
                     version: '1.0.0',
-                    repository: `https://github.com/modelcontextprotocol/servers/tree/main/src/${id}`,
-                    installCommand: `npx -y @modelcontextprotocol/server-${id}`,
+                    repository: `https://github.com/modelcontextprotocol/servers/tree/main/src/${packageId}`,
+                    installCommand: `npx -y ${packageName}`,
                     configSnippet: {
                         command: 'npx',
-                        args: ['-y', `@modelcontextprotocol/server-${id}`]
+                        args: ['-y', packageName]
                     },
-                    tags: id.split('-').concat(this.inferCategory(name, description).toLowerCase()),
+                    tags: rawId.split('-').concat(this.inferCategory(name, description).toLowerCase()),
                     stars: Math.floor(Math.random() * 500) + 50,
-                    verified: true
+                    verified: isVerified
                 });
             }
 
@@ -60,6 +86,19 @@ export class LiveContentScraper {
             console.error('[Scraper] Network error during live fetch:', error);
             return this.getFallbackTools();
         }
+    }
+
+    private static inferPackageId(name: string, rawId: string): string {
+        const id = this.KNOWN_PACKAGE_MAPPING[rawId];
+        if (id) return id;
+
+        const text = (name + ' ' + rawId).toLowerCase();
+        if (text.includes('postgres')) return 'postgres';
+        if (text.includes('sqlite')) return 'sqlite';
+        if (text.includes('google')) return 'google-search';
+        if (text.includes('github')) return 'github';
+
+        return rawId;
     }
 
     private static inferCategory(name: string, description: string): string {
@@ -133,7 +172,7 @@ export class LiveContentScraper {
                 version: '1.2.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem',
                 installCommand: 'npx -y @modelcontextprotocol/server-filesystem',
-                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem'] },
+                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem', 'C:/'] },
                 tags: ['files', 'local', 'system'],
                 stars: 980,
                 verified: true
