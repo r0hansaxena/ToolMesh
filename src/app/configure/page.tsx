@@ -67,6 +67,20 @@ function ConfigureContent() {
         };
     }, []);
 
+    // Detect Platform
+    const [platform, setPlatform] = useState<'windows' | 'macos' | 'linux' | 'unknown'>('unknown');
+
+    useEffect(() => {
+        const detectPlatform = () => {
+            const ua = window.navigator.userAgent.toLowerCase();
+            if (ua.includes('win')) return 'windows';
+            if (ua.includes('mac')) return 'macos';
+            if (ua.includes('linux')) return 'linux';
+            return 'unknown';
+        };
+        setPlatform(detectPlatform());
+    }, []);
+
     // Generate config whenever selection changes
     useEffect(() => {
         if (selectedToolIds.length === 0) {
@@ -78,7 +92,7 @@ function ConfigureContent() {
         fetch('/api/generate-config', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ toolIds: selectedToolIds, client }),
+            body: JSON.stringify({ toolIds: selectedToolIds, client, platform }),
         })
             .then((res) => res.json())
             .then((data) => setConfig(data))
