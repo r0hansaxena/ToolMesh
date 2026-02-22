@@ -25,14 +25,45 @@ function ConfigureContent() {
     const [config, setConfig] = useState<ConfigResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [allTools, setAllTools] = useState<ToolInfo[]>([]);
+    const [visibleTools, setVisibleTools] = useState<ToolInfo[]>([]);
+    const [isScanning, setIsScanning] = useState(true);
     const [copied, setCopied] = useState(false);
 
-    // Fetch all tools for the selector
+    // Fetch and simulate real-time discovery
     useEffect(() => {
+        let isMounted = true;
+        setIsScanning(true);
+        setVisibleTools([]); // Clear on mount
+
         fetch('/api/tools')
             .then((res) => res.json())
-            .then((data) => setAllTools(data.tools))
+            .then((data) => {
+                if (!isMounted) return;
+                const tools = data.tools as ToolInfo[];
+                setAllTools(tools);
+
+                // Simulate "Live Discovery" after a short scan period
+                setTimeout(() => {
+                    if (!isMounted) return;
+                    setIsScanning(false);
+                    // Staggered entry
+                    tools.forEach((tool, index) => {
+                        setTimeout(() => {
+                            if (!isMounted) return;
+                            setVisibleTools(prev => {
+                                // De-duplicate just in case timers overlap
+                                if (prev.some(t => t.id === tool.id)) return prev;
+                                return [...prev, tool];
+                            });
+                        }, index * 100);
+                    });
+                }, 1500);
+            })
             .catch(console.error);
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     // Generate config whenever selection changes
@@ -104,33 +135,51 @@ function ConfigureContent() {
                 <div className={styles.layout}>
                     {/* Left: Tool Selector */}
                     <div className={styles.selectorPanel}>
+                        <div className={styles.networkStatus}>
+                            <div className={styles.statusDot} />
+                            <span className={styles.statusLabel}>Mesh Synchronized</span>
+                        </div>
+
                         <h2 className={styles.panelTitle}>Select Tools</h2>
+
                         <div className={styles.toolsList}>
-                            {allTools.map((tool) => (
-                                <button
-                                    key={tool.id}
-                                    className={`${styles.toolItem} ${selectedToolIds.includes(tool.id) ? styles.toolSelected : ''}`}
-                                    onClick={() => toggleTool(tool.id)}
-                                >
-                                    <div className={styles.toolItemInfo}>
-                                        <span className={styles.toolItemName}>{tool.name}</span>
-                                        <span className={styles.toolItemCategory}>{tool.category}</span>
+                            {isScanning ? (
+                                <div className={styles.scanningOverlay}>
+                                    <div className={styles.scanPulse}>
+                                        <div className={styles.pulseCircle} />
+                                        <div className={styles.pulseCircle} />
+                                        <span className={styles.scanIcon}>📡</span>
                                     </div>
-                                    <div className={`${styles.toolItemCheck} ${selectedToolIds.includes(tool.id) ? styles.checked : ''}`}>
-                                        {selectedToolIds.includes(tool.id) && (
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                                <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        )}
-                                    </div>
-                                </button>
-                            ))}
+                                    <div className={styles.scanText}>Scanning for Live MCP Servers...</div>
+                                    <div className={styles.scanSubtext}>Mesh IDs: node-alpha, node-beta, node-gamma</div>
+                                </div>
+                            ) : (
+                                visibleTools.map((tool, index) => (
+                                    <button
+                                        key={tool.id}
+                                        className={`${styles.toolItem} ${selectedToolIds.includes(tool.id) ? styles.toolSelected : ''}`}
+                                        onClick={() => toggleTool(tool.id)}
+                                        style={{ animationDelay: `${index * 50}ms` }}
+                                    >
+                                        <div className={styles.toolItemInfo}>
+                                            <span className={styles.toolItemName}>{tool.name}</span>
+                                            <span className={styles.toolItemCategory}>{tool.category}</span>
+                                        </div>
+                                        <div className={`${styles.toolItemCheck} ${selectedToolIds.includes(tool.id) ? styles.checked : ''}`}>
+                                            {selectedToolIds.includes(tool.id) && (
+                                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                                    <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </button>
+                                ))
+                            )}
                         </div>
                     </div>
 
                     {/* Right: Preview */}
                     <div className={styles.previewPanel}>
-                        {/* Client Picker */}
                         <h2 className={styles.panelTitle}>Target Client</h2>
                         <div className={styles.clientPicker}>
                             {clients.map((c) => (
