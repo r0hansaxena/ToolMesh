@@ -53,6 +53,7 @@ export interface EvidenceBundle {
 
 export interface ConfigOutput {
   client: 'claude-desktop' | 'cursor' | 'generic';
+  platform: string;
   config: Record<string, unknown>;
   tools: McpTool[];
 }

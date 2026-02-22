@@ -183,6 +183,48 @@
     font-size: 1rem;
 }
 
+.platformSelector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+}
+
+.platformLabel {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+}
+
+.platformOptions {
+    display: flex;
+    gap: 6px;
+}
+
+.platformItem {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.platformItem:hover {
+    background: rgba(124, 58, 237, 0.05);
+}
+
+.platformActive {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary-light);
+}
+
 .previewHeader {
     display: flex;
     align-items: center;

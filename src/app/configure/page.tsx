@@ -74,15 +74,26 @@ function ConfigureContent() {
         const detectPlatform = () => {
             const ua = window.navigator.userAgent.toLowerCase();
             const platformStr = (window.navigator as any).platform?.toLowerCase() || '';
-            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
 
+            // Check for mobile first
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
             if (isMobile) return 'mobile';
-            if (ua.includes('win') || platformStr.includes('win')) return 'windows';
-            if (ua.includes('mac') || platformStr.includes('mac')) return 'macos';
-            if (ua.includes('linux') || platformStr.includes('linux')) return 'linux';
+
+            // More aggressive Windows detection
+            if (ua.includes('windows') || ua.includes('win32') || platformStr.includes('win')) {
+                return 'windows';
+            }
+            if (ua.includes('macintosh') || ua.includes('mac os x') || platformStr.includes('mac')) {
+                return 'macos';
+            }
+            if (ua.includes('linux') || platformStr.includes('linux')) {
+                return 'linux';
+            }
             return 'unknown';
         };
-        setPlatform(detectPlatform());
+        const detected = detectPlatform();
+        console.log('[DEBUG] Detected Platform:', detected);
+        setPlatform(detected);
     }, []);
 
     // Generate config whenever selection changes
@@ -171,6 +182,21 @@ function ConfigureContent() {
                     )}
                     {/* Left: Tool Selector */}
                     <div className={styles.selectorPanel}>
+                        <div className={styles.platformSelector}>
+                            <span className={styles.platformLabel}>OS:</span>
+                            <div className={styles.platformOptions}>
+                                {(['windows', 'macos', 'linux'] as const).map((p) => (
+                                    <button
+                                        key={p}
+                                        className={`${styles.platformItem} ${platform === p ? styles.platformActive : ''}`}
+                                        onClick={() => setPlatform(p)}
+                                    >
+                                        {p.charAt(0).toUpperCase() + p.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         <div className={styles.networkStatus}>
                             <div className={styles.statusDot} />
                             <span className={styles.statusLabel}>Mesh Synchronized</span>

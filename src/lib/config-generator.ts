@@ -73,6 +73,7 @@ export function generateConfig(
         case 'claude-desktop':
             return {
                 client,
+                platform,
                 tools: transformedTools,
                 config: {
                     mcpServers: Object.fromEntries(
@@ -87,6 +88,7 @@ export function generateConfig(
         case 'cursor':
             return {
                 client,
+                platform,
                 tools: transformedTools,
                 config: {
                     mcpServers: Object.fromEntries(
@@ -106,6 +108,7 @@ export function generateConfig(
         default:
             return {
                 client: 'generic',
+                platform,
                 tools: transformedTools,
                 config: {
                     version: '1.0',
