@@ -1,4 +1,6 @@
-# ToolMesh: Decentralized Discovery for the Model Context Protocol
+# ToolMesh
+
+**Decentralized Discovery for the Model Context Protocol**
 
 ## Project Overview
 
