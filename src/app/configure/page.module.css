@@ -285,6 +285,48 @@
     text-align: center;
 }
 
+.pathInputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: var(--space-md);
+    padding: var(--space-md);
+    background: rgba(124, 58, 237, 0.03);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border-subtle);
+}
+
+.pathInputLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pathInputWrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.pathInput {
+    flex: 1;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+}
+
+.pathInput:focus {
+    border-color: var(--accent-primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+}
+
 .selectedSummary {
     display: flex;
     flex-direction: column;

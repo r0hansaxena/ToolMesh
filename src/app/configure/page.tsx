@@ -96,6 +96,15 @@ function ConfigureContent() {
         setPlatform(detected);
     }, []);
 
+    // Custom configuration options
+    const [filesystemPath, setFilesystemPath] = useState('');
+
+    useEffect(() => {
+        if (platform === 'windows') setFilesystemPath('C:/');
+        else if (platform === 'macos' || platform === 'linux') setFilesystemPath('~/');
+        else setFilesystemPath('');
+    }, [platform]);
+
     // Generate config whenever selection changes
     useEffect(() => {
         if (selectedToolIds.length === 0) {
@@ -107,13 +116,18 @@ function ConfigureContent() {
         fetch('/api/generate-config', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ toolIds: selectedToolIds, client, platform }),
+            body: JSON.stringify({
+                toolIds: selectedToolIds,
+                client,
+                platform,
+                configOptions: { filesystemPath }
+            }),
         })
             .then((res) => res.json())
             .then((data) => setConfig(data))
             .catch(console.error)
             .finally(() => setLoading(false));
-    }, [selectedToolIds, client, platform]);
+    }, [selectedToolIds, client, platform, filesystemPath]);
 
     const toggleTool = (id: string) => {
         setSelectedToolIds((prev) =>
@@ -314,6 +328,22 @@ function ConfigureContent() {
                                         {selectedToolIds.length} tool{selectedToolIds.length !== 1 ? 's' : ''}
                                     </span>
                                 </div>
+
+                                {/* Custom Path Input for Filesystem Tools */}
+                                {selectedToolIds.some(id => id.toLowerCase().includes('filesystem')) && (
+                                    <div className={styles.pathInputContainer}>
+                                        <label className={styles.pathInputLabel}>Root Directory Path</label>
+                                        <div className={styles.pathInputWrapper}>
+                                            <input
+                                                type="text"
+                                                className={styles.pathInput}
+                                                placeholder={platform === 'windows' ? "e.g. C:/Projects" : "e.g. ~/projects"}
+                                                value={filesystemPath}
+                                                onChange={(e) => setFilesystemPath(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                                 <div className={styles.selectedToolsTags}>
                                     {selectedToolIds.map(id => {
                                         const tool = allTools.find(t => t.id === id);

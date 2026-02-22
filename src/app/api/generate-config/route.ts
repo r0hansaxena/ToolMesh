@@ -5,7 +5,7 @@ import { generateConfig } from '@/lib/config-generator';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { toolIds, client, platform } = body;
+        const { toolIds, client, platform, configOptions } = body;
 
         if (!toolIds || !Array.isArray(toolIds) || toolIds.length === 0) {
             return NextResponse.json({ error: 'toolIds array is required' }, { status: 400 });
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No valid tools found' }, { status: 400 });
         }
 
-        const config = generateConfig(tools, selectedClient, platform);
+        const config = generateConfig(tools, selectedClient, platform, configOptions);
         return NextResponse.json(config);
     } catch {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
