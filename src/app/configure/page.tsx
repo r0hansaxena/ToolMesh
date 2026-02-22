@@ -73,12 +73,13 @@ function ConfigureContent() {
     useEffect(() => {
         const detectPlatform = () => {
             const ua = window.navigator.userAgent.toLowerCase();
+            const platformStr = (window.navigator as any).platform?.toLowerCase() || '';
             const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
 
             if (isMobile) return 'mobile';
-            if (ua.includes('win')) return 'windows';
-            if (ua.includes('mac')) return 'macos';
-            if (ua.includes('linux')) return 'linux';
+            if (ua.includes('win') || platformStr.includes('win')) return 'windows';
+            if (ua.includes('mac') || platformStr.includes('mac')) return 'macos';
+            if (ua.includes('linux') || platformStr.includes('linux')) return 'linux';
             return 'unknown';
         };
         setPlatform(detectPlatform());

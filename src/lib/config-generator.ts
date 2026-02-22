@@ -17,15 +17,23 @@ export function generateConfig(
                 configSnippet.command = 'npx.cmd';
             }
 
-            // 2. Transform paths for filesystem tool
-            if (tool.id === 'filesystem' || tool.id === 'live-filesystem') {
+            // 2. Transform paths for any tool that looks like a filesystem tool
+            if (tool.id.includes('filesystem') || tool.name.toLowerCase().includes('filesystem')) {
                 if (Array.isArray(configSnippet.args)) {
+                    // Check if a path placeholder exists, if not, consider adding C:/ for Windows
+                    let hasPath = false;
                     configSnippet.args = configSnippet.args.map((arg: string) => {
                         if (arg === '<PATH_TO_FILES_DIR>') {
+                            hasPath = true;
                             return 'C:/';
                         }
                         return arg;
                     });
+
+                    // If it's a filesystem tool but doesn't have a path arg yet, add it
+                    if (!hasPath && tool.id.includes('filesystem')) {
+                        configSnippet.args.push('C:/');
+                    }
                 }
             }
         } else if (platform === 'macos' || platform === 'linux') {
