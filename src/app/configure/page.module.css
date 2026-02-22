@@ -445,6 +445,43 @@
     }
 }
 
+.mobileAlert {
+    grid-column: 1 / -1;
+    background: rgba(245, 158, 11, 0.05);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    animation: fadeInSlide 0.4s ease forwards;
+}
+
+.mobileAlertIcon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.mobileAlertContent {
+    flex: 1;
+}
+
+.mobileAlertTitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #f59e0b;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.mobileAlertText {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
 @media (max-width: 900px) {
     .layout {
         grid-template-columns: 1fr;

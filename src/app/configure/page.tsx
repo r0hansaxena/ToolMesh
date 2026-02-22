@@ -68,11 +68,14 @@ function ConfigureContent() {
     }, []);
 
     // Detect Platform
-    const [platform, setPlatform] = useState<'windows' | 'macos' | 'linux' | 'unknown'>('unknown');
+    const [platform, setPlatform] = useState<'windows' | 'macos' | 'linux' | 'mobile' | 'unknown'>('unknown');
 
     useEffect(() => {
         const detectPlatform = () => {
             const ua = window.navigator.userAgent.toLowerCase();
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+
+            if (isMobile) return 'mobile';
             if (ua.includes('win')) return 'windows';
             if (ua.includes('mac')) return 'macos';
             if (ua.includes('linux')) return 'linux';
@@ -153,6 +156,18 @@ function ConfigureContent() {
                 </div>
 
                 <div className={styles.layout}>
+                    {platform === 'mobile' && (
+                        <div className={styles.mobileAlert}>
+                            <span className={styles.mobileAlertIcon}>📱</span>
+                            <div className={styles.mobileAlertContent}>
+                                <strong className={styles.mobileAlertTitle}>Desktop Recommended</strong>
+                                <p className={styles.mobileAlertText}>
+                                    MCP tools are designed to run locally on your desktop.
+                                    Switch to Windows, macOS, or Linux to use these configurations.
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     {/* Left: Tool Selector */}
                     <div className={styles.selectorPanel}>
                         <div className={styles.networkStatus}>
