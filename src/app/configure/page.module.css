@@ -212,22 +212,82 @@
 
 .selectedSummary {
     display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.summaryHeader {
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: var(--space-md);
-    padding: var(--space-sm) 0;
 }
 
 .summaryLabel {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
-.summaryClient {
+.summaryCount {
     font-size: 0.75rem;
     color: var(--text-tertiary);
     font-family: var(--font-mono);
+}
+
+.selectedToolsTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.selectedToolChip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+}
+
+.selectedToolChip:hover {
+    border-color: var(--accent-primary-light);
+}
+
+.chipName {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.chipCategory {
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    background: var(--bg-primary);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+.removeChipBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+}
+
+.removeChipBtn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
 }
 
 

@@ -230,12 +230,33 @@ function ConfigureContent() {
 
                         {config && (
                             <div className={styles.selectedSummary}>
-                                <span className={styles.summaryLabel}>
-                                    {selectedToolIds.length} tool{selectedToolIds.length !== 1 ? 's' : ''} selected
-                                </span>
-                                <span className={styles.summaryClient}>
-                                    Target: {clients.find((c) => c.id === client)?.name}
-                                </span>
+                                <div className={styles.summaryHeader}>
+                                    <span className={styles.summaryLabel}>Selected Tools</span>
+                                    <span className={styles.summaryCount}>
+                                        {selectedToolIds.length} tool{selectedToolIds.length !== 1 ? 's' : ''}
+                                    </span>
+                                </div>
+                                <div className={styles.selectedToolsTags}>
+                                    {selectedToolIds.map(id => {
+                                        const tool = allTools.find(t => t.id === id);
+                                        if (!tool) return null;
+                                        return (
+                                            <div key={id} className={styles.selectedToolChip}>
+                                                <span className={styles.chipName}>{tool.name}</span>
+                                                <span className={styles.chipCategory}>{tool.category}</span>
+                                                <button
+                                                    className={styles.removeChipBtn}
+                                                    onClick={() => toggleTool(id)}
+                                                    title="Remove from config"
+                                                >
+                                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                                        <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         )}
                     </div>
