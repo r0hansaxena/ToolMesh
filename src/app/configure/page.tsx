@@ -102,7 +102,7 @@ function ConfigureContent() {
             .then((data) => setConfig(data))
             .catch(console.error)
             .finally(() => setLoading(false));
-    }, [selectedToolIds, client]);
+    }, [selectedToolIds, client, platform]);
 
     const toggleTool = (id: string) => {
         setSelectedToolIds((prev) =>
