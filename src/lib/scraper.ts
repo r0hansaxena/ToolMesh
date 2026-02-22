@@ -172,7 +172,7 @@ export class LiveContentScraper {
                 version: '1.2.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem',
                 installCommand: 'npx -y @modelcontextprotocol/server-filesystem',
-                configSnippet: { command: 'npx.cmd', args: ['-y', '@modelcontextprotocol/server-filesystem', '<PATH_TO_FILES_DIR>'] },
+                configSnippet: { command: 'npx.cmd', args: ['-y', '@modelcontextprotocol/server-filesystem', 'C:/'] },
                 tags: ['files', 'local', 'system'],
                 stars: 980,
                 verified: true
