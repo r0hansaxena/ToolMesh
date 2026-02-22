@@ -29,23 +29,6 @@ To utilize ToolMesh effectively, ensure the following requirements are met:
 - **Supported Clients**: For automated provisioning, users should have an MCP-compatible host environment installed, such as Claude Desktop or the Cursor IDE.
 - **Hardware Resources**: A standard desktop or server environment capable of running modern web applications and concurrent asynchronous processes.
 
-## Operational Instructions
-
-### 1. Tool Discovery and Auditing
-Navigate to the discovery dashboard and input search parameters. The platform will automatically trigger the Cortensor Consensus Engine to identify and audit relevant MCP tools. Monitor the real-time progress as validator nodes report their findings to the consensus layer.
-
-### 2. Inspecting Evidence
-Before proceeding with installation, select a specific tool to view its formal Evidence Bundle. Review the consensus agreement percentage and individual node feedback to verify the tool's security and utility.
-
-### 3. Environment Provisioning
-Access the configuration module to select the discovered tools you wish to deploy. Select your target client (e.g., Claude Desktop or Cursor) to generate a standardized JSON configuration. Download and apply this file to your client's configuration path to enable the tools in your agentic environment.
-
-## Use Cases
-
-- **Agent Framework Scaffolding**: Rapidly identifying and validating sets of tools for new AI agent deployments.
-- **Security Auditing**: Verifying the integrity of third-party tools before permitting access to sensitive local filesystems or APIs.
-- **Registry Management**: Maintaining a synchronized view of the global MCP ecosystem without relying on single points of failure.
-
 ## License
 
 Standard MIT License. See the LICENSE file for full legal disclosures.
