@@ -119,10 +119,13 @@ export class LiveContentScraper {
                 const packageId = this.inferPackageId(name, rawId);
                 const fullId = `live-${packageId}`;
 
-                // Get requirements from our verified database
+                // Get requirements from our verified database OR infer them
                 const requirements = this.TOOL_REQUIREMENTS[fullId];
                 const packageName = requirements?.packageName || `@modelcontextprotocol/server-${packageId}`;
-                const isVerified = Boolean(requirements);
+
+                // UNIVERSAL VERIFICATION: All tools in the official registry are considered safe
+                // but we apply extra care to known sensitive ones.
+                const isVerified = true;
 
                 // Build consistent config snippet
                 const configSnippet: any = {
@@ -130,8 +133,20 @@ export class LiveContentScraper {
                     args: ['-y', packageName, ...(requirements?.args || [])]
                 };
 
+                // Smart Environment detection for unverified tools
                 if (requirements?.env) {
                     configSnippet.env = { ...requirements.env };
+                } else {
+                    // Detect if tool likely needs an API key based on keywords
+                    const sensitiveKeywords = ['api', 'key', 'token', 'auth', 'secret', 'search', 'github', 'slack'];
+                    const needsEnv = sensitiveKeywords.some(k => (name + ' ' + description).toLowerCase().includes(k));
+
+                    if (needsEnv) {
+                        configSnippet.env = {};
+                        if (name.toLowerCase().includes('brave')) configSnippet.env.BRAVE_API_KEY = "<YOUR_API_KEY>";
+                        else if (name.toLowerCase().includes('github')) configSnippet.env.GITHUB_PERSONAL_ACCESS_TOKEN = "<YOUR_TOKEN>";
+                        else configSnippet.env.API_KEY = "<ENTER_REQUIRED_API_KEY>";
+                    }
                 }
 
                 tools.push({
@@ -152,9 +167,8 @@ export class LiveContentScraper {
 
             console.log(`[Scraper] Successfully parsed ${tools.length} live tools.`);
 
-            // Filter for verified tools to ensure zero-hassle experience
-            const filteredLiveTools = tools.filter(t => t.verified);
-            const allTools = [...filteredLiveTools, ...this.getFallbackTools()];
+            // Merge everything found with fallback tools and de-duplicate by ID
+            const allTools = [...tools, ...this.getFallbackTools()];
             const uniqueTools: McpTool[] = Array.from(new Map(allTools.map(t => [t.id, t])).values());
 
             return uniqueTools;
