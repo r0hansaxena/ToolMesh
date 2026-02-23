@@ -63,10 +63,14 @@ export function generateConfig(
                 tools: transformedTools,
                 config: {
                     mcpServers: Object.fromEntries(
-                        transformedTools.map((tool) => [
-                            tool.id.replace('live-', ''), // Clean up IDs for config
-                            tool.configSnippet,
-                        ])
+                        transformedTools.map((tool) => {
+                            const cleanId = tool.id.replace('live-', '').toLowerCase();
+                            // Final safety check: ensure command is never empty
+                            if (!tool.configSnippet.command) {
+                                tool.configSnippet.command = platform === 'windows' ? 'npx.cmd' : 'npx';
+                            }
+                            return [cleanId, tool.configSnippet];
+                        })
                     ),
                 },
             };
@@ -78,14 +82,20 @@ export function generateConfig(
                 tools: transformedTools,
                 config: {
                     mcpServers: Object.fromEntries(
-                        transformedTools.map((tool) => [
-                            tool.id.replace('live-', ''),
-                            {
-                                ...tool.configSnippet,
-                                disabled: false,
-                                autoApprove: [],
-                            },
-                        ])
+                        transformedTools.map((tool) => {
+                            const cleanId = tool.id.replace('live-', '').toLowerCase();
+                            if (!tool.configSnippet.command) {
+                                tool.configSnippet.command = platform === 'windows' ? 'npx.cmd' : 'npx';
+                            }
+                            return [
+                                cleanId,
+                                {
+                                    ...tool.configSnippet,
+                                    disabled: false,
+                                    autoApprove: [],
+                                },
+                            ];
+                        })
                     ),
                 },
             };
@@ -98,11 +108,17 @@ export function generateConfig(
                 tools: transformedTools,
                 config: {
                     version: '1.0',
-                    servers: transformedTools.map((tool) => ({
-                        name: tool.id.replace('live-', ''),
-                        displayName: tool.name,
-                        ...tool.configSnippet,
-                    })),
+                    servers: transformedTools.map((tool) => {
+                        const cleanId = tool.id.replace('live-', '').toLowerCase();
+                        if (!tool.configSnippet.command) {
+                            tool.configSnippet.command = platform === 'windows' ? 'npx.cmd' : 'npx';
+                        }
+                        return {
+                            name: cleanId,
+                            displayName: tool.name,
+                            ...tool.configSnippet,
+                        };
+                    }),
                 },
             };
     }

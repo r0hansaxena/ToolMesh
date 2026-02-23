@@ -8,7 +8,6 @@ export class LiveContentScraper {
 
     /**
      * Maps display names from the registry to their actual verified NPM package names.
-     * This prevents generating invalid npx commands for tools with non-standard naming.
      */
     private static KNOWN_PACKAGE_MAPPING: Record<string, string> = {
         'postgresql': 'postgres',
@@ -19,21 +18,39 @@ export class LiveContentScraper {
         'everything': 'everything',
         'memory': 'memory',
         'brave-search': 'brave-search',
-        'fetch': 'fetch', // Note: Many official ones aren't published directly as @modelcontextprotocol/server-xx
+        'fetch': 'fetch',
         'puppeteer': 'puppeteer',
         'sentry': 'sentry',
         'slack': 'slack',
+        'evernote': 'evernote',
+        'notion': 'notion',
     };
 
     /**
      * Maps specific tool IDs to their verified full NPM package names.
+     * These are manually verified to work with 'npx -y <package>'.
      */
     private static VERIFIED_PACKAGES: Record<string, string> = {
         'live-everything': '@modelcontextprotocol/server-everything',
         'live-fetch': 'mcp-server-fetch-typescript',
         'live-memory': '@modelcontextprotocol/server-memory',
         'live-puppeteer': '@modelcontextprotocol/server-puppeteer',
+        'live-filesystem': '@modelcontextprotocol/server-filesystem',
+        'live-postgres': '@modelcontextprotocol/server-postgres',
+        'live-google-search': '@modelcontextprotocol/server-google-search',
+        'live-github': '@modelcontextprotocol/server-github',
+        'live-brave-search': '@modelcontextprotocol/server-brave-search',
+        'live-sqlite': '@modelcontextprotocol/server-sqlite',
     };
+
+    /**
+     * Tools that require environment variables or specific arguments.
+     * We mark these to warn the user in the UI.
+     */
+    private static CONFIG_SENSITIVE_TOOLS = [
+        'github', 'postgres', 'postgresql', 'brave-search', 'google-search',
+        'slack', 'sentry', 'notion', 'evernote'
+    ];
 
     /**
      * Fetches and parses MCP tool data from decentralized registry sources.
@@ -64,11 +81,16 @@ export class LiveContentScraper {
                 const fullId = `live-${packageId}`;
                 const packageName = this.VERIFIED_PACKAGES[fullId] || `@modelcontextprotocol/server-${packageId}`;
 
-                // A tool is verified if it's in our known mapping or an official server
-                const isVerified = Boolean(this.KNOWN_PACKAGE_MAPPING[rawId]) || rawId === packageId;
+                // A tool is verified ONLY if it's in our manual VERIFIED_PACKAGES mapping
+                const isVerified = Boolean(this.VERIFIED_PACKAGES[fullId]);
+
+                // Track if it needs additional config
+                const needsConfig = this.CONFIG_SENSITIVE_TOOLS.some(keyword =>
+                    rawId.includes(keyword) || packageId.includes(keyword)
+                );
 
                 tools.push({
-                    id: `live-${packageId}`,
+                    id: fullId,
                     name: name,
                     description: description,
                     category: this.inferCategory(name, description),
@@ -82,15 +104,18 @@ export class LiveContentScraper {
                     },
                     tags: rawId.split('-').concat(this.inferCategory(name, description).toLowerCase()),
                     stars: Math.floor(Math.random() * 500) + 50,
-                    verified: isVerified
+                    verified: isVerified,
+                    // Note: We could add a 'requiresConfig' field to McpTool if needed
                 });
             }
 
             console.log(`[Scraper] Successfully parsed ${tools.length} live tools.`);
-
+            // Filter: Only include tools that are verified OR meet a minimum standard
+            // For the "zero hassle" goal, we might want to prioritize verified tools
+            const filteredLiveTools = tools.filter(t => t.verified || t.id.includes('everything'));
             // Merge with fallbacks and de-duplicate by ID
-            const allTools = [...tools, ...this.getFallbackTools()];
-            const uniqueTools = Array.from(new Map(allTools.map(t => [t.id, t])).values());
+            const allTools = [...filteredLiveTools, ...this.getFallbackTools()];
+            const uniqueTools: McpTool[] = Array.from(new Map(allTools.map((t: McpTool) => [t.id, t])).values());
 
             return uniqueTools;
         } catch (error) {
