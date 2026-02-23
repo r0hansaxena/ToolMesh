@@ -1,14 +1,17 @@
 import { McpTool } from './types';
 
+interface ToolRequirement {
+    packageName: string;
+    env?: Record<string, string>;
+    args?: string[];
+}
+
 export class LiveContentScraper {
     private static REGISTRY_URLS = [
         'https://raw.githubusercontent.com/modelcontextprotocol/servers/main/README.md',
         'https://raw.githubusercontent.com/wong2/awesome-mcp-servers/main/README.md',
     ];
 
-    /**
-     * Maps display names from the registry to their actual verified NPM package names.
-     */
     private static KNOWN_PACKAGE_MAPPING: Record<string, string> = {
         'postgresql': 'postgres',
         'sqlite': 'sqlite',
@@ -27,46 +30,84 @@ export class LiveContentScraper {
     };
 
     /**
-     * Maps specific tool IDs to their verified full NPM package names.
-     * These are manually verified to work with 'npx -y <package>'.
+     * Comprehensive database of verified MCP tools and their requirements.
+     * This is the "Source of Truth" to ensure zero-hassle configurations.
      */
-    private static VERIFIED_PACKAGES: Record<string, string> = {
-        'live-everything': '@modelcontextprotocol/server-everything',
-        'live-fetch': 'mcp-server-fetch-typescript',
-        'live-memory': '@modelcontextprotocol/server-memory',
-        'live-puppeteer': '@modelcontextprotocol/server-puppeteer',
-        'live-filesystem': '@modelcontextprotocol/server-filesystem',
-        'live-postgres': '@modelcontextprotocol/server-postgres',
-        'live-google-search': '@modelcontextprotocol/server-google-search',
-        'live-github': '@modelcontextprotocol/server-github',
-        'live-brave-search': '@modelcontextprotocol/server-brave-search',
-        'live-sqlite': '@modelcontextprotocol/server-sqlite',
+    private static TOOL_REQUIREMENTS: Record<string, ToolRequirement> = {
+        'live-everything': {
+            packageName: '@modelcontextprotocol/server-everything'
+        },
+        'live-fetch': {
+            packageName: 'mcp-server-fetch-typescript'
+        },
+        'live-memory': {
+            packageName: '@modelcontextprotocol/server-memory'
+        },
+        'live-puppeteer': {
+            packageName: '@modelcontextprotocol/server-puppeteer'
+        },
+        'live-filesystem': {
+            packageName: '@modelcontextprotocol/server-filesystem',
+            args: ['<ENTER_ABSOLUTE_PATH_TO_DIRECTORY>']
+        },
+        'live-postgres': {
+            packageName: '@modelcontextprotocol/server-postgres',
+            args: ['postgresql://localhost:5432/your_database']
+        },
+        'live-sqlite': {
+            packageName: '@modelcontextprotocol/server-sqlite',
+            args: ['/path/to/your/database.db']
+        },
+        'live-github': {
+            packageName: '@modelcontextprotocol/server-github',
+            env: { GITHUB_PERSONAL_ACCESS_TOKEN: "<YOUR_GITHUB_TOKEN>" }
+        },
+        'live-brave-search': {
+            packageName: '@modelcontextprotocol/server-brave-search',
+            env: { BRAVE_API_KEY: "<YOUR_BRAVE_API_KEY>" }
+        },
+        'live-google-search': {
+            packageName: '@modelcontextprotocol/server-google-search',
+            env: {
+                GOOGLE_API_KEY: "<YOUR_GOOGLE_API_KEY>",
+                GOOGLE_ENGINE_ID: "<YOUR_CUSTOM_SEARCH_ENGINE_ID>"
+            }
+        },
+        'live-slack': {
+            packageName: '@modelcontextprotocol/server-slack',
+            env: {
+                SLACK_BOT_TOKEN: "<YOUR_SLACK_BOT_TOKEN>",
+                SLACK_APP_TOKEN: "<YOUR_SLACK_APP_TOKEN>"
+            }
+        },
+        'live-sentry': {
+            packageName: '@modelcontextprotocol/server-sentry',
+            env: {
+                SENTRY_AUTH_TOKEN: "<YOUR_SENTRY_AUTH_TOKEN>",
+                SENTRY_ORG: "<YOUR_SENTRY_ORG_SLUG>"
+            }
+        },
+        'live-evernote': {
+            packageName: '@modelcontextprotocol/server-evernote',
+            env: { EVERNOTE_ACCESS_TOKEN: "<YOUR_EVERNOTE_TOKEN>" }
+        },
+        'live-notion': {
+            packageName: '@modelcontextprotocol/server-notion',
+            env: { NOTION_API_KEY: "<YOUR_NOTION_API_KEY>" }
+        }
     };
 
     /**
-     * Tools that require environment variables or specific arguments.
-     * We mark these to warn the user in the UI.
-     */
-    private static CONFIG_SENSITIVE_TOOLS = [
-        'github', 'postgres', 'postgresql', 'brave-search', 'google-search',
-        'slack', 'sentry', 'notion', 'evernote'
-    ];
-
-    /**
      * Fetches and parses MCP tool data from decentralized registry sources.
-     * In a production environment, this would hit a more structured API or On-Chain Oracle.
      */
     static async fetchLiveRegistry(): Promise<McpTool[]> {
         console.log('[Scraper] Initializing live registry fetch from GitHub...');
 
         try {
-            // Fetching from the official modelcontextprotocol/servers repository README
             const response = await fetch('https://raw.githubusercontent.com/modelcontextprotocol/servers/main/README.md');
             if (!response.ok) throw new Error('Failed to fetch official registry');
 
             const markdown = await response.text();
-
-            // Refined regex to handle different link/image formats in the official registry
             const toolRegex = /- (?:<img[^>]*> )?\*\*\[?([^\]*]+)\]?(?:\([^)]+\))?\*\* - (.*)$/gm;
             const tools: McpTool[] = [];
             let match;
@@ -75,33 +116,22 @@ export class LiveContentScraper {
                 const name = match[1].trim();
                 const description = match[2].trim();
                 const rawId = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-
-                // Use mapping and keyword inference to get the correct package ID
                 const packageId = this.inferPackageId(name, rawId);
                 const fullId = `live-${packageId}`;
-                const packageName = this.VERIFIED_PACKAGES[fullId] || `@modelcontextprotocol/server-${packageId}`;
 
-                // A tool is verified ONLY if it's in our manual VERIFIED_PACKAGES mapping
-                const isVerified = Boolean(this.VERIFIED_PACKAGES[fullId]);
+                // Get requirements from our verified database
+                const requirements = this.TOOL_REQUIREMENTS[fullId];
+                const packageName = requirements?.packageName || `@modelcontextprotocol/server-${packageId}`;
+                const isVerified = Boolean(requirements);
 
-                // Track if it needs additional config
-                const needsConfig = this.CONFIG_SENSITIVE_TOOLS.some(keyword =>
-                    rawId.includes(keyword) || packageId.includes(keyword)
-                );
-
-                // Prepare the config snippet
+                // Build consistent config snippet
                 const configSnippet: any = {
                     command: 'npx',
-                    args: ['-y', packageName]
+                    args: ['-y', packageName, ...(requirements?.args || [])]
                 };
 
-                // Add API Key placeholders for sensitive tools
-                if (needsConfig) {
-                    configSnippet.env = {};
-                    if (rawId.includes('brave')) configSnippet.env.BRAVE_API_KEY = "<YOUR_BRAVE_API_KEY>";
-                    if (rawId.includes('github')) configSnippet.env.GITHUB_PERSONAL_ACCESS_TOKEN = "<YOUR_GITHUB_TOKEN>";
-                    if (rawId.includes('google')) configSnippet.env.GOOGLE_API_KEY = "<YOUR_GOOGLE_API_KEY>";
-                    if (rawId.includes('slack')) configSnippet.env.SLACK_BOT_TOKEN = "<YOUR_SLACK_BOT_TOKEN>";
+                if (requirements?.env) {
+                    configSnippet.env = { ...requirements.env };
                 }
 
                 tools.push({
@@ -116,17 +146,16 @@ export class LiveContentScraper {
                     configSnippet: configSnippet,
                     tags: rawId.split('-').concat(this.inferCategory(name, description).toLowerCase()),
                     stars: Math.floor(Math.random() * 500) + 50,
-                    verified: isVerified,
+                    verified: isVerified
                 });
             }
 
             console.log(`[Scraper] Successfully parsed ${tools.length} live tools.`);
-            // Filter: Only include tools that are verified OR meet a minimum standard
-            // For the "zero hassle" goal, we might want to prioritize verified tools
-            const filteredLiveTools = tools.filter(t => t.verified || t.id.includes('everything'));
-            // Merge with fallbacks and de-duplicate by ID
+
+            // Filter for verified tools to ensure zero-hassle experience
+            const filteredLiveTools = tools.filter(t => t.verified);
             const allTools = [...filteredLiveTools, ...this.getFallbackTools()];
-            const uniqueTools: McpTool[] = Array.from(new Map(allTools.map((t: McpTool) => [t.id, t])).values());
+            const uniqueTools: McpTool[] = Array.from(new Map(allTools.map(t => [t.id, t])).values());
 
             return uniqueTools;
         } catch (error) {
@@ -144,7 +173,6 @@ export class LiveContentScraper {
         if (text.includes('sqlite')) return 'sqlite';
         if (text.includes('google')) return 'google-search';
         if (text.includes('github')) return 'github';
-
         return rawId;
     }
 
@@ -160,40 +188,31 @@ export class LiveContentScraper {
     private static getFallbackTools(): McpTool[] {
         return [
             {
-                id: 'live-thirdweb',
-                name: 'Thirdweb',
-                description: 'Deploy and manage smart contracts using Thirdweb SDK.',
-                category: 'Development',
-                author: 'Thirdweb',
-                version: '1.0.2',
-                repository: 'https://github.com/thirdweb-dev/mcp-server',
-                installCommand: 'npx -y @thirdweb-dev/mcp',
-                configSnippet: {
-                    command: 'npx',
-                    args: ['-y', '@thirdweb-dev/mcp'],
-                    env: {
-                        THIRDWEB_SECRET_KEY: "<YOUR_THIRDWEB_SECRET_KEY>"
-                    }
-                },
-                tags: ['web3', 'blockchain', 'contracts'],
-                stars: 1200,
+                id: 'live-everything',
+                name: 'Everything',
+                description: 'A test server that shows off every MCP feature.',
+                category: 'Utility',
+                author: 'MCP Community',
+                version: '1.0.0',
+                repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/everything',
+                installCommand: 'npx -y @modelcontextprotocol/server-everything',
+                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-everything'] },
+                tags: ['test', 'everything', 'utility'],
+                stars: 500,
                 verified: true
             },
             {
-                id: 'live-postgres',
-                name: 'PostgreSQL',
-                description: 'Read and query your Postgres databases with full schema awareness.',
-                category: 'Database',
+                id: 'live-fetch',
+                name: 'Fetch',
+                description: 'Web content fetching and conversion for efficient LLM usage.',
+                category: 'Utility',
                 author: 'MCP Community',
-                version: '0.4.5',
-                repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/postgres',
-                installCommand: 'npx -y @modelcontextprotocol/server-postgres',
-                configSnippet: {
-                    command: 'npx',
-                    args: ['-y', '@modelcontextprotocol/server-postgres', 'postgresql://localhost:5432/postgres']
-                },
-                tags: ['sql', 'database', 'postgres'],
-                stars: 1100,
+                version: '1.0.0',
+                repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/fetch',
+                installCommand: 'npx -y mcp-server-fetch-typescript',
+                configSnippet: { command: 'npx', args: ['-y', 'mcp-server-fetch-typescript'] },
+                tags: ['web', 'fetch', 'markdown'],
+                stars: 800,
                 verified: true
             },
             {
@@ -205,7 +224,11 @@ export class LiveContentScraper {
                 version: '1.0.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/github',
                 installCommand: 'npx -y @modelcontextprotocol/server-github',
-                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-github'] },
+                configSnippet: {
+                    command: 'npx',
+                    args: ['-y', '@modelcontextprotocol/server-github'],
+                    env: { GITHUB_PERSONAL_ACCESS_TOKEN: "<YOUR_GITHUB_TOKEN>" }
+                },
                 tags: ['git', 'github', 'development'],
                 stars: 450,
                 verified: true
@@ -219,23 +242,12 @@ export class LiveContentScraper {
                 version: '1.2.0',
                 repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem',
                 installCommand: 'npx -y @modelcontextprotocol/server-filesystem',
-                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem', '<PATH_TO_FILES_DIR>'] },
+                configSnippet: {
+                    command: 'npx',
+                    args: ['-y', '@modelcontextprotocol/server-filesystem', '<ENTER_DIRECTORY_PATH>']
+                },
                 tags: ['files', 'local', 'system'],
                 stars: 980,
-                verified: true
-            },
-            {
-                id: 'live-everything',
-                name: 'Everything',
-                description: 'A test server that shows off every MCP feature.',
-                category: 'Utility',
-                author: 'MCP Community',
-                version: '1.0.0',
-                repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/everything',
-                installCommand: 'npx -y @modelcontextprotocol/server-everything',
-                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-everything'] },
-                tags: ['test', 'everything', 'utility'],
-                stars: 500,
                 verified: true
             }
         ];

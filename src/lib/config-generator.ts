@@ -35,7 +35,7 @@ export function generateConfig(
                 let hasPath = false;
                 configSnippet.args = configSnippet.args.map((arg: string) => {
                     const argStr = String(arg);
-                    if (argStr === '<PATH_TO_FILES_DIR>' || argStr === 'C:/' || argStr === '~/') {
+                    if (argStr === '<PATH_TO_FILES_DIR>' || argStr === '<ENTER_DIRECTORY_PATH>' || argStr === 'C:/' || argStr === '~/') {
                         hasPath = true;
                         return finalPath;
                     }
