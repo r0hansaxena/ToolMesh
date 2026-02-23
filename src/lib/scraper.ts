@@ -19,10 +19,20 @@ export class LiveContentScraper {
         'everything': 'everything',
         'memory': 'memory',
         'brave-search': 'brave-search',
-        'fetch': 'fetch',
+        'fetch': 'fetch', // Note: Many official ones aren't published directly as @modelcontextprotocol/server-xx
         'puppeteer': 'puppeteer',
         'sentry': 'sentry',
         'slack': 'slack',
+    };
+
+    /**
+     * Maps specific tool IDs to their verified full NPM package names.
+     */
+    private static VERIFIED_PACKAGES: Record<string, string> = {
+        'live-everything': '@modelcontextprotocol/server-everything',
+        'live-fetch': 'mcp-server-fetch-typescript',
+        'live-memory': '@modelcontextprotocol/server-memory',
+        'live-puppeteer': '@modelcontextprotocol/server-puppeteer',
     };
 
     /**
@@ -51,7 +61,8 @@ export class LiveContentScraper {
 
                 // Use mapping and keyword inference to get the correct package ID
                 const packageId = this.inferPackageId(name, rawId);
-                const packageName = `@modelcontextprotocol/server-${packageId}`;
+                const fullId = `live-${packageId}`;
+                const packageName = this.VERIFIED_PACKAGES[fullId] || `@modelcontextprotocol/server-${packageId}`;
 
                 // A tool is verified if it's in our known mapping or an official server
                 const isVerified = Boolean(this.KNOWN_PACKAGE_MAPPING[rawId]) || rawId === packageId;
@@ -175,6 +186,20 @@ export class LiveContentScraper {
                 configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem', '<PATH_TO_FILES_DIR>'] },
                 tags: ['files', 'local', 'system'],
                 stars: 980,
+                verified: true
+            },
+            {
+                id: 'live-everything',
+                name: 'Everything',
+                description: 'A test server that shows off every MCP feature.',
+                category: 'Utility',
+                author: 'MCP Community',
+                version: '1.0.0',
+                repository: 'https://github.com/modelcontextprotocol/servers/tree/main/src/everything',
+                installCommand: 'npx -y @modelcontextprotocol/server-everything',
+                configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-everything'] },
+                tags: ['test', 'everything', 'utility'],
+                stars: 500,
                 verified: true
             }
         ];
