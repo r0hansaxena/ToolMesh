@@ -100,9 +100,11 @@ function ConfigureContent() {
     const [filesystemPath, setFilesystemPath] = useState('');
 
     useEffect(() => {
-        if (platform === 'windows') setFilesystemPath('C:/');
-        else if (platform === 'macos' || platform === 'linux') setFilesystemPath('~/');
-        else setFilesystemPath('');
+        if (platform === 'windows' || platform === 'macos' || platform === 'linux') {
+            setFilesystemPath('<ENTER_DIRECTORY_PATH>');
+        } else {
+            setFilesystemPath('');
+        }
     }, [platform]);
 
     // Generate config whenever selection changes

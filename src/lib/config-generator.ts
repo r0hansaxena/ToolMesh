@@ -28,9 +28,7 @@ export function generateConfig(
                     configSnippet.args = [];
                 }
 
-                const defaultPath = platform === 'windows' ? 'C:/' :
-                    (platform === 'macos' || platform === 'linux') ? '~/' :
-                        '<PATH_TO_FILES_DIR>';
+                const defaultPath = '<ENTER_DIRECTORY_PATH>';
 
                 const finalPath = options.filesystemPath || defaultPath;
 
