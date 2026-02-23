@@ -89,6 +89,21 @@ export class LiveContentScraper {
                     rawId.includes(keyword) || packageId.includes(keyword)
                 );
 
+                // Prepare the config snippet
+                const configSnippet: any = {
+                    command: 'npx',
+                    args: ['-y', packageName]
+                };
+
+                // Add API Key placeholders for sensitive tools
+                if (needsConfig) {
+                    configSnippet.env = {};
+                    if (rawId.includes('brave')) configSnippet.env.BRAVE_API_KEY = "<YOUR_BRAVE_API_KEY>";
+                    if (rawId.includes('github')) configSnippet.env.GITHUB_PERSONAL_ACCESS_TOKEN = "<YOUR_GITHUB_TOKEN>";
+                    if (rawId.includes('google')) configSnippet.env.GOOGLE_API_KEY = "<YOUR_GOOGLE_API_KEY>";
+                    if (rawId.includes('slack')) configSnippet.env.SLACK_BOT_TOKEN = "<YOUR_SLACK_BOT_TOKEN>";
+                }
+
                 tools.push({
                     id: fullId,
                     name: name,
@@ -98,14 +113,10 @@ export class LiveContentScraper {
                     version: '1.0.0',
                     repository: `https://github.com/modelcontextprotocol/servers/tree/main/src/${packageId}`,
                     installCommand: `npx -y ${packageName}`,
-                    configSnippet: {
-                        command: 'npx',
-                        args: ['-y', packageName]
-                    },
+                    configSnippet: configSnippet,
                     tags: rawId.split('-').concat(this.inferCategory(name, description).toLowerCase()),
                     stars: Math.floor(Math.random() * 500) + 50,
                     verified: isVerified,
-                    // Note: We could add a 'requiresConfig' field to McpTool if needed
                 });
             }
 
