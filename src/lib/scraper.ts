@@ -150,15 +150,15 @@ export class LiveContentScraper {
                 }
 
                 // Generate setup guide based on requirements and category
-                let setupGuide = "Standard MCP server setup. No special credentials required.";
+                let setupGuide = "This tool uses a standard MCP server setup. No special credentials required.";
                 if (requirements?.env) {
                     const keys = Object.keys(requirements.env);
                     setupGuide = `Requires environment variables: ${keys.join(', ')}.`;
                 } else if (configSnippet.env) {
                     const keys = Object.keys(configSnippet.env);
-                    setupGuide = `Likely requires API keys or tokens (${keys.join(', ')}).`;
+                    setupGuide = `Requires specific API keys or tokens (${keys.join(', ')}).`;
                 } else if (requirements?.args?.some(a => a.includes('PATH') || a.includes('path'))) {
-                    setupGuide = "Requires a local filesystem path to be provided as an argument.";
+                    setupGuide = "Requires a local filesystem path provided as an argument.";
                 } else if (requirements?.args?.some(a => a.includes('postgresql') || a.includes('sqlite'))) {
                     setupGuide = "Requires a valid database connection string or file path.";
                 }

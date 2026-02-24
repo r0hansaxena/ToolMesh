@@ -359,7 +359,7 @@ function ConfigureContent() {
                                                 <div className={styles.usageInstructions}>
                                                     <span className={styles.usageLabel}>How to use:</span>
                                                     <p className={styles.usageText}>
-                                                        {tool.setupGuide || "Standard MCP server setup. No special credentials required."}
+                                                        {tool.setupGuide || "This tool uses a standard MCP server setup. No special credentials required."}
                                                         <br /><br />
                                                         Download the <code>{client === 'claude-desktop' ? 'claude_desktop_config.json' : client === 'cursor' ? 'mcp.json' : 'json configuration'}</code>
                                                         and place it in your {client === 'claude-desktop' ? 'Claude' : client === 'cursor' ? 'Cursor' : 'MCP'} config folder.
