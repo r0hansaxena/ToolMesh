@@ -8,6 +8,8 @@ interface ToolInfo {
     id: string;
     name: string;
     category: string;
+    description: string;
+    repository: string;
 }
 
 interface ConfigResult {
@@ -346,23 +348,43 @@ function ConfigureContent() {
                                         </div>
                                     </div>
                                 )}
-                                <div className={styles.selectedToolsTags}>
+                                <div className={styles.selectedToolsCards}>
                                     {selectedToolIds.map(id => {
                                         const tool = allTools.find(t => t.id === id);
                                         if (!tool) return null;
                                         return (
-                                            <div key={id} className={styles.selectedToolChip}>
-                                                <span className={styles.chipName}>{tool.name}</span>
-                                                <span className={styles.chipCategory}>{tool.category}</span>
-                                                <button
-                                                    className={styles.removeChipBtn}
-                                                    onClick={() => toggleTool(id)}
-                                                    title="Remove from config"
-                                                >
-                                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                                                        <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                </button>
+                                            <div key={id} className={styles.selectedToolCard}>
+                                                <div className={styles.toolCardHeader}>
+                                                    <div className={styles.toolCardTitleInfo}>
+                                                        <span className={styles.toolCardName}>{tool.name}</span>
+                                                        <span className={styles.toolCardCategory}>{tool.category}</span>
+                                                    </div>
+                                                    <button
+                                                        className={styles.removeCardBtn}
+                                                        onClick={() => toggleTool(id)}
+                                                        title="Remove from config"
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 10 10" fill="none">
+                                                            <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <p className={styles.toolCardDescription}>{tool.description}</p>
+                                                {tool.repository && (
+                                                    <a
+                                                        href={tool.repository}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={styles.docLink}
+                                                    >
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                                        </svg>
+                                                        View Documentation
+                                                    </a>
+                                                )}
                                             </div>
                                         );
                                     })}

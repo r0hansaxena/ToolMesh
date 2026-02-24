@@ -354,42 +354,53 @@
     font-family: var(--font-mono);
 }
 
-.selectedToolsTags {
+.selectedToolsCards {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-direction: column;
+    gap: var(--space-md);
 }
 
-.selectedToolChip {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
+.selectedToolCard {
+    padding: var(--space-md);
     background: var(--bg-tertiary);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     transition: all var(--transition-fast);
 }
 
-.selectedToolChip:hover {
+.selectedToolCard:hover {
     border-color: var(--accent-primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.chipName {
-    font-size: 0.75rem;
-    font-weight: 500;
+.toolCardHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.toolCardTitleInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.toolCardName {
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text-primary);
 }
 
-.chipCategory {
-    font-size: 0.65rem;
+.toolCardCategory {
+    font-size: 0.7rem;
     color: var(--text-tertiary);
-    background: var(--bg-primary);
-    padding: 2px 6px;
-    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.removeChipBtn {
+.removeCardBtn {
     background: transparent;
     border: none;
     color: var(--text-tertiary);
@@ -397,14 +408,41 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2px;
-    border-radius: 50%;
+    padding: 4px;
+    border-radius: var(--radius-sm);
     transition: all var(--transition-fast);
 }
 
-.removeChipBtn:hover {
+.removeCardBtn:hover {
     color: #ef4444;
     background: rgba(239, 68, 68, 0.1);
+}
+
+.toolCardDescription {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.docLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent-primary-light);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.docLink:hover {
+    color: var(--accent-primary);
+    text-decoration: underline;
+}
+
+.docLink svg {
+    flex-shrink: 0;
 }
 
 
