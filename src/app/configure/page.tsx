@@ -333,21 +333,6 @@ function ConfigureContent() {
                                     </span>
                                 </div>
 
-                                {/* Custom Path Input for Filesystem Tools */}
-                                {selectedToolIds.some(id => id.toLowerCase().includes('filesystem')) && (
-                                    <div className={styles.pathInputContainer}>
-                                        <label className={styles.pathInputLabel}>Root Directory Path</label>
-                                        <div className={styles.pathInputWrapper}>
-                                            <input
-                                                type="text"
-                                                className={styles.pathInput}
-                                                placeholder={platform === 'windows' ? "e.g. C:/Projects" : "e.g. ~/projects"}
-                                                value={filesystemPath}
-                                                onChange={(e) => setFilesystemPath(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
                                 <div className={styles.selectedToolsCards}>
                                     {selectedToolIds.map(id => {
                                         const tool = allTools.find(t => t.id === id);
@@ -370,6 +355,14 @@ function ConfigureContent() {
                                                     </button>
                                                 </div>
                                                 <p className={styles.toolCardDescription}>{tool.description}</p>
+                                                <div className={styles.usageInstructions}>
+                                                    <span className={styles.usageLabel}>How to use:</span>
+                                                    <p className={styles.usageText}>
+                                                        Download the <code>{client === 'claude-desktop' ? 'claude_desktop_config.json' : client === 'cursor' ? 'mcp.json' : 'json configuration'}</code>
+                                                        and place it in your {client === 'claude-desktop' ? 'Claude' : client === 'cursor' ? 'Cursor' : 'MCP'} config folder.
+                                                        Ensure you have Node.js installed to run the tool.
+                                                    </p>
+                                                </div>
                                                 {tool.repository && (
                                                     <a
                                                         href={tool.repository}
