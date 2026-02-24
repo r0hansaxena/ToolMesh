@@ -11,6 +11,7 @@ export interface McpTool {
   tags: string[];
   stars: number;
   verified: boolean;
+  setupGuide?: string;
 }
 
 export interface CortensorNode {

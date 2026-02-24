@@ -149,6 +149,20 @@ export class LiveContentScraper {
                     }
                 }
 
+                // Generate setup guide based on requirements and category
+                let setupGuide = "Standard MCP server setup. No special credentials required.";
+                if (requirements?.env) {
+                    const keys = Object.keys(requirements.env);
+                    setupGuide = `Requires environment variables: ${keys.join(', ')}.`;
+                } else if (configSnippet.env) {
+                    const keys = Object.keys(configSnippet.env);
+                    setupGuide = `Likely requires API keys or tokens (${keys.join(', ')}).`;
+                } else if (requirements?.args?.some(a => a.includes('PATH') || a.includes('path'))) {
+                    setupGuide = "Requires a local filesystem path to be provided as an argument.";
+                } else if (requirements?.args?.some(a => a.includes('postgresql') || a.includes('sqlite'))) {
+                    setupGuide = "Requires a valid database connection string or file path.";
+                }
+
                 tools.push({
                     id: fullId,
                     name: name,
@@ -161,7 +175,8 @@ export class LiveContentScraper {
                     configSnippet: configSnippet,
                     tags: rawId.split('-').concat(this.inferCategory(name, description).toLowerCase()),
                     stars: Math.floor(Math.random() * 500) + 50,
-                    verified: isVerified
+                    verified: isVerified,
+                    setupGuide: setupGuide
                 });
             }
 
@@ -213,7 +228,8 @@ export class LiveContentScraper {
                 configSnippet: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-everything'] },
                 tags: ['test', 'everything', 'utility'],
                 stars: 500,
-                verified: true
+                verified: true,
+                setupGuide: 'Standard MCP server setup. No special credentials required.'
             },
             {
                 id: 'live-fetch',
@@ -227,7 +243,8 @@ export class LiveContentScraper {
                 configSnippet: { command: 'npx', args: ['-y', 'mcp-server-fetch-typescript'] },
                 tags: ['web', 'fetch', 'markdown'],
                 stars: 800,
-                verified: true
+                verified: true,
+                setupGuide: 'Standard MCP server setup. No special credentials required.'
             },
             {
                 id: 'live-github',
@@ -245,7 +262,8 @@ export class LiveContentScraper {
                 },
                 tags: ['git', 'github', 'development'],
                 stars: 450,
-                verified: true
+                verified: true,
+                setupGuide: 'Requires a Personal Access Token (GITHUB_PERSONAL_ACCESS_TOKEN) with repo and user scopes.'
             },
             {
                 id: 'live-filesystem',
@@ -262,7 +280,8 @@ export class LiveContentScraper {
                 },
                 tags: ['files', 'local', 'system'],
                 stars: 980,
-                verified: true
+                verified: true,
+                setupGuide: 'Requires one or more local directory paths provided as absolute paths in the configuration arguments.'
             }
         ];
     }
