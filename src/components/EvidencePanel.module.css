@@ -131,6 +131,39 @@
     margin-top: var(--space-xs);
 }
 
+.signatureRow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.signatureLabel {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.signatureValue {
+    font-size: 0.65rem;
+    color: var(--accent-primary-light);
+    font-family: var(--font-mono);
+    opacity: 0.8;
+}
+
+.voteTimestamp {
+    font-size: 0.6rem;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    text-align: right;
+    margin-top: 4px;
+    opacity: 0.6;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

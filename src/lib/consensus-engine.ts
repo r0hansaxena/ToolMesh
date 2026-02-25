@@ -1,16 +1,7 @@
 import { McpTool, CortensorNode, NodeVote, ConsensusResult, EvidenceBundle } from './types';
 import { LiveContentScraper } from './scraper';
 import { RealTimeAuditor } from './auditor';
-
-const CORTENSOR_NODES: CortensorNode[] = [
-    { id: 'node-alpha', name: 'Alpha-US-East', region: 'US-East', reliability: 0.97, latency: 45 },
-    { id: 'node-beta', name: 'Beta-EU-West', region: 'EU-West', reliability: 0.95, latency: 78 },
-    { id: 'node-gamma', name: 'Gamma-Asia-SE', region: 'Asia-SE', reliability: 0.93, latency: 112 },
-    { id: 'node-delta', name: 'Delta-US-West', region: 'US-West', reliability: 0.96, latency: 52 },
-    { id: 'node-epsilon', name: 'Epsilon-EU-Central', region: 'EU-Central', reliability: 0.94, latency: 85 },
-    { id: 'node-zeta', name: 'Zeta-SA-East', region: 'SA-East', reliability: 0.91, latency: 130 },
-    { id: 'node-eta', name: 'Eta-AU-East', region: 'AU-East', reliability: 0.92, latency: 145 },
-];
+import { CortensorOracle } from './oracle';
 
 function jitter(base: number, variance: number): number {
     return base + (Math.random() - 0.5) * 2 * variance;
@@ -27,6 +18,14 @@ async function generateNodeVote(node: CortensorNode, tool: McpTool, queryRelevan
     const approved = score > 0.55 && auditResult.vulnerabilityCount === 0;
     const latency = Math.round(jitter(node.latency, 20));
 
+    // Generate cryptographic signature for the vote (Simulated decentralized signing)
+    const signature = await CortensorOracle.generateSignature(node.id, {
+        toolId: tool.id,
+        score,
+        approved,
+        timestamp: new Date().toISOString()
+    });
+
     return {
         nodeId: node.id,
         nodeName: node.name,
@@ -35,6 +34,8 @@ async function generateNodeVote(node: CortensorNode, tool: McpTool, queryRelevan
         reasoning: auditResult.findings[Math.floor(Math.random() * auditResult.findings.length)],
         latency: Math.max(10, latency),
         approved,
+        signature,
+        timestamp: new Date().toISOString()
     };
 }
 
@@ -74,7 +75,9 @@ export async function runConsensus(query: string): Promise<EvidenceBundle> {
     toolScores.sort((a, b) => b.relevance - a.relevance);
     const topTools = toolScores.slice(0, 5);
 
-    // 3. DISTRIBUTED AUDIT & CONSENSUS: Parallel async audits by nodes
+    // 3. DISTRIBUTED AUDIT & CONSENSUS: Parallel async audits by nodes discovered live via Oracle
+    const CORTENSOR_NODES = await CortensorOracle.fetchActiveValidators();
+
     const consensusResults: ConsensusResult[] = await Promise.all(
         topTools.map(async ({ tool, relevance }) => {
             const votes = await Promise.all(
@@ -117,5 +120,3 @@ export async function runConsensus(query: string): Promise<EvidenceBundle> {
         consensusReachedIn: Date.now() - startTime,
     };
 }
-
-export { CORTENSOR_NODES };

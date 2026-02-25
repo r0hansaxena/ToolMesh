@@ -20,6 +20,10 @@ export interface CortensorNode {
   region: string;
   reliability: number;
   latency: number;
+  publicKey: string;
+  walletAddress: string;
+  stakedAmount: number;
+  version: string;
 }
 
 export interface NodeVote {
@@ -30,6 +34,8 @@ export interface NodeVote {
   reasoning: string;
   latency: number;
   approved: boolean;
+  signature?: string;
+  timestamp: string;
 }
 
 export interface ConsensusResult {

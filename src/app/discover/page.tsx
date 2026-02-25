@@ -92,7 +92,7 @@ function DiscoverContent() {
 
                 <ConsensusVisualizer
                     running={loading}
-                    nodesCount={7}
+                    nodesCount={evidence?.totalNodesParticipated || 7}
                     completedIn={evidence?.consensusReachedIn}
                     averageLatency={evidence?.averageLatency}
                     agreementPct={

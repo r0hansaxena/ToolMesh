@@ -48,6 +48,18 @@ export default function EvidencePanel({ votes, reasoning }: EvidencePanelProps) 
                             <span className={styles.voteLatency}>{vote.latency}ms</span>
                         </div>
                         <p className={styles.voteReasoning}>{vote.reasoning}</p>
+
+                        {vote.signature && (
+                            <div className={styles.signatureRow}>
+                                <span className={styles.signatureLabel}>Signature:</span>
+                                <span className={styles.signatureValue} title={vote.signature}>
+                                    {vote.signature.substring(0, 16)}...
+                                </span>
+                            </div>
+                        )}
+                        <div className={styles.voteTimestamp}>
+                            {new Date(vote.timestamp).toLocaleTimeString()}
+                        </div>
                     </div>
                 ))}
             </div>
