@@ -133,8 +133,9 @@
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--text-tertiary);
-  min-width: 32px;
-  height: 32px;
+  min-width: 48px;
+  height: 28px;
+  padding: 0px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
