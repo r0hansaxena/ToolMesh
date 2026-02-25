@@ -11,6 +11,58 @@ interface ToolInfo {
     description: string;
     repository: string;
     setupGuide?: string;
+    installCommand?: string;
+    configSnippet?: Record<string, unknown>;
+}
+
+const OS_ICONS: Record<string, React.ReactNode> = {
+    windows: (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M0 2.3l6.5-.9v6.3H0V2.3zm7.3-1L16 0v7.7H7.3V1.3zM16 8.7V16l-8.7-1.2V8.7H16zM6.5 14.7L0 13.8V8.7h6.5v6z" />
+        </svg>
+    ),
+    macos: (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M12.2 8.5c0-2 1.6-3 1.7-3.1-0.9-1.4-2.4-1.6-2.9-1.6-1.2-0.1-2.4 0.7-3 0.7s-1.6-0.7-2.6-0.7C3.8 3.8 2.3 4.8 1.4 6.4c-1.8 3.1-0.5 7.7 1.3 10.2 0.8 1.2 1.8 2.6 3.2 2.5 1.3-0.1 1.7-0.8 3.3-0.8 1.5 0 1.9 0.8 3.2 0.8s2.2-1.2 3.1-2.4c1-1.4 1.4-2.7 1.4-2.8C16.8 13.9 12.2 12.1 12.2 8.5zM9.9 2.5c0.7-0.9 1.2-2.1 1-3.3-1 0-2.2 0.7-2.9 1.5-0.6 0.7-1.2 2-1 3.1C8.1 3.9 9.2 3.3 9.9 2.5z" transform="scale(0.75) translate(1.5, 2)" />
+        </svg>
+    ),
+    linux: (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 1C5.8 1 4 2.8 4 5v2.5c-1 .5-2 1.5-2 3 0 1.1.9 2 2 2h.5c.3.9 1.1 1.5 2 1.5h3c.9 0 1.7-.6 2-1.5H12c1.1 0 2-.9 2-2 0-1.5-1-2.5-2-3V5c0-2.2-1.8-4-4-4zm-2 4c0-1.1.9-2 2-2s2 .9 2 2v2H6V5zm-1.5 5.5a.5.5 0 110-1 .5.5 0 010 1zm3 1a.5.5 0 110-1 .5.5 0 010 1zm1 0a.5.5 0 110-1 .5.5 0 010 1zm3-1a.5.5 0 110-1 .5.5 0 010 1z" />
+        </svg>
+    ),
+};
+
+function getConfigFilePath(client: string, platform: string): string {
+    const paths: Record<string, Record<string, string>> = {
+        'claude-desktop': {
+            windows: '%APPDATA%\\Claude\\claude_desktop_config.json',
+            macos: '~/Library/Application Support/Claude/claude_desktop_config.json',
+            linux: '~/.config/Claude/claude_desktop_config.json',
+        },
+        cursor: {
+            windows: '%USERPROFILE%\\.cursor\\mcp.json',
+            macos: '~/.cursor/mcp.json',
+            linux: '~/.cursor/mcp.json',
+        },
+        generic: {
+            windows: 'mcp_config.json',
+            macos: 'mcp_config.json',
+            linux: 'mcp_config.json',
+        },
+    };
+    return paths[client]?.[platform] || paths[client]?.windows || 'config.json';
+}
+
+function getNpmPackage(tool: ToolInfo): string {
+    const snippet = tool.configSnippet as any;
+    if (snippet?.args && Array.isArray(snippet.args)) {
+        const yIdx = snippet.args.indexOf('-y');
+        if (yIdx >= 0 && snippet.args[yIdx + 1]) {
+            return snippet.args[yIdx + 1];
+        }
+    }
+    return tool.installCommand?.replace('npx -y ', '') || tool.name.toLowerCase();
 }
 
 interface ConfigResult {
@@ -202,18 +254,16 @@ function ConfigureContent() {
                     {/* Left: Tool Selector */}
                     <div className={styles.selectorPanel}>
                         <div className={styles.platformSelector}>
-                            <span className={styles.platformLabel}>OS:</span>
-                            <div className={styles.platformOptions}>
-                                {(['windows', 'macos', 'linux'] as const).map((p) => (
-                                    <button
-                                        key={p}
-                                        className={`${styles.platformItem} ${platform === p ? styles.platformActive : ''}`}
-                                        onClick={() => setPlatform(p)}
-                                    >
-                                        {p.charAt(0).toUpperCase() + p.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
+                            {(['windows', 'macos', 'linux'] as const).map((p) => (
+                                <button
+                                    key={p}
+                                    className={`${styles.platformItem} ${platform === p ? styles.platformActive : ''}`}
+                                    onClick={() => setPlatform(p)}
+                                >
+                                    <span className={styles.platformIcon}>{OS_ICONS[p]}</span>
+                                    <span className={styles.platformName}>{p === 'macos' ? 'macOS' : p.charAt(0).toUpperCase() + p.slice(1)}</span>
+                                </button>
+                            ))}
                         </div>
 
                         <div className={styles.networkStatus}>
@@ -355,32 +405,78 @@ function ConfigureContent() {
                                                         </svg>
                                                     </button>
                                                 </div>
-                                                <p className={styles.toolCardDescription}>{tool.description}</p>
-                                                <div className={styles.usageInstructions}>
-                                                    <span className={styles.usageLabel}>How to use:</span>
-                                                    <p className={styles.usageText}>
-                                                        {tool.setupGuide || "This tool uses a standard MCP server setup. No special credentials required."}
-                                                        <br /><br />
-                                                        Download the <code>{client === 'claude-desktop' ? 'claude_desktop_config.json' : client === 'cursor' ? 'mcp.json' : 'json configuration'}</code>
-                                                        and place it in your {client === 'claude-desktop' ? 'Claude' : client === 'cursor' ? 'Cursor' : 'MCP'} config folder.
-                                                        Ensure you have Node.js installed to run the tool.
-                                                    </p>
+                                                <div className={styles.toolCardBody}>
+                                                    <p className={styles.toolCardDescription}>{tool.description}</p>
+
+                                                    <div className={styles.toolMeta}>
+                                                        <div className={styles.metaItem}>
+                                                            <span className={styles.metaLabel}>Package</span>
+                                                            <div className={styles.metaValueRow}>
+                                                                <code className={styles.metaCode}>{getNpmPackage(tool)}</code>
+                                                                <button
+                                                                    className={styles.copySmallBtn}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        navigator.clipboard.writeText(getNpmPackage(tool));
+                                                                    }}
+                                                                    title="Copy package name"
+                                                                >
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div className={styles.metaItem}>
+                                                            <span className={styles.metaLabel}>Config Path</span>
+                                                            <code className={styles.metaCode}>{getConfigFilePath(client, platform)}</code>
+                                                        </div>
+                                                        <div className={styles.metaItem}>
+                                                            <span className={styles.metaLabel}>Run Command</span>
+                                                            <div className={styles.metaValueRow}>
+                                                                <code className={styles.metaCode}>{tool.installCommand || `npx -y ${getNpmPackage(tool)}`}</code>
+                                                                <button
+                                                                    className={styles.copySmallBtn}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        navigator.clipboard.writeText(tool.installCommand || `npx -y ${getNpmPackage(tool)}`);
+                                                                    }}
+                                                                    title="Copy command"
+                                                                >
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={styles.usageInstructions}>
+                                                        <span className={styles.usageLabel}>Setup Notes</span>
+                                                        <p className={styles.usageText}>
+                                                            {tool.setupGuide || "Standard MCP server setup. No special credentials required."}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                {tool.repository && (
-                                                    <a
-                                                        href={tool.repository}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className={styles.docLink}
-                                                    >
-                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                                            <polyline points="15 3 21 3 21 9"></polyline>
-                                                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                                                        </svg>
-                                                        View Documentation
-                                                    </a>
-                                                )}
+                                                <div className={styles.toolCardActions}>
+                                                    {tool.repository && (
+                                                        <a
+                                                            href={tool.repository}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className={styles.docLink}
+                                                        >
+                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                                <polyline points="15 3 21 3 21 9"></polyline>
+                                                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                                                            </svg>
+                                                            View Documentation
+                                                        </a>
+                                                    )}
+                                                </div>
                                             </div>
                                         );
                                     })}

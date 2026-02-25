@@ -185,44 +185,64 @@
 
 .platformSelector {
     display: flex;
-    align-items: center;
-    gap: var(--space-md);
+    gap: 0;
     margin-bottom: var(--space-lg);
-    padding: var(--space-md) var(--space-lg);
-    background: var(--bg-tertiary);
+    background: var(--bg-primary);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
-}
-
-.platformLabel {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--text-tertiary);
-}
-
-.platformOptions {
-    display: flex;
-    gap: 6px;
+    padding: 3px;
+    overflow: hidden;
 }
 
 .platformItem {
-    padding: 4px 10px;
-    font-size: 0.75rem;
-    border-radius: var(--radius-full);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: calc(var(--radius-lg) - 2px);
     border: 1px solid transparent;
-    color: var(--text-secondary);
+    background: transparent;
+    color: var(--text-tertiary);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
 .platformItem:hover {
-    background: rgba(124, 58, 237, 0.05);
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .platformActive {
-    background: rgba(124, 58, 237, 0.1);
-    border-color: var(--accent-primary);
+    background: rgba(124, 58, 237, 0.12);
+    border-color: rgba(124, 58, 237, 0.3);
     color: var(--accent-primary-light);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
+}
+
+.platformActive:hover {
+    background: rgba(124, 58, 237, 0.15);
+    color: var(--accent-primary-light);
+}
+
+.platformIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.platformActive .platformIcon {
+    opacity: 1;
+}
+
+.platformName {
+    letter-spacing: 0.01em;
 }
 
 .previewHeader {
@@ -361,43 +381,66 @@
 }
 
 .selectedToolCard {
-    padding: var(--space-md);
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    padding: var(--space-lg);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.selectedToolCard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .selectedToolCard:hover {
-    border-color: var(--accent-primary-light);
+    border-color: rgba(124, 58, 237, 0.3);
+    background: rgba(255, 255, 255, 0.03);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.selectedToolCard:hover::before {
+    opacity: 1;
 }
 
 .toolCardHeader {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
 }
 
 .toolCardTitleInfo {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    gap: 12px;
 }
 
 .toolCardName {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
+    letter-spacing: -0.01em;
 }
 
 .toolCardCategory {
-    font-size: 0.7rem;
-    color: var(--text-tertiary);
+    font-size: 0.65rem;
+    color: var(--accent-primary-light);
+    background: rgba(124, 58, 237, 0.1);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    font-weight: 700;
 }
 
 .removeCardBtn {
@@ -408,77 +451,175 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
-    border-radius: var(--radius-sm);
-    transition: all var(--transition-fast);
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
 }
 
 .removeCardBtn:hover {
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.1);
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.1);
 }
 
 .toolCardDescription {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.toolCardBody {
+    position: relative;
+    z-index: 1;
+}
+
+.usageInstructions {
+    margin-bottom: 20px;
+    padding: 0 0 0 16px;
+    border-left: 2px solid rgba(124, 58, 237, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.usageLabel {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.usageText {
     font-size: 0.85rem;
     color: var(--text-secondary);
     line-height: 1.5;
-    margin-bottom: 12px;
+    margin: 0;
+}
+
+.usageText code {
+    background: rgba(124, 58, 237, 0.1);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-primary-light);
+}
+
+.toolMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-md);
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metaLabel {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.metaCode {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--accent-primary-light);
+    background: rgba(124, 58, 237, 0.06);
+    padding: 4px 8px;
+    border-radius: 4px;
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.metaValueRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.metaValueRow .metaCode {
+    flex: 1;
+}
+
+.copySmallBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.copySmallBtn:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: rgba(124, 58, 237, 0.3);
+    color: var(--accent-primary-light);
+}
+
+.toolCardActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    position: relative;
+    z-index: 1;
 }
 
 .docLink {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    padding: 8px 14px;
     font-size: 0.8rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--accent-primary-light);
+    background: rgba(124, 58, 237, 0.08);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: var(--radius-md);
     text-decoration: none;
-    transition: all var(--transition-fast);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+    margin-top: 12px;
+    letter-spacing: 0.01em;
 }
 
 .docLink:hover {
-    color: var(--accent-primary);
-    text-decoration: underline;
+    background: rgba(124, 58, 237, 0.15);
+    border-color: var(--accent-primary);
+    color: #fff;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
 }
 
 .docLink svg {
     flex-shrink: 0;
+    transition: transform 0.2s ease;
 }
 
-.usageInstructions {
-    margin-bottom: 12px;
-    padding: 10px;
-    background: rgba(124, 58, 237, 0.04);
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(124, 58, 237, 0.1);
+.docLink:hover svg {
+    transform: translate(1px, -1px);
 }
-
-.usageLabel {
-    display: block;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--accent-primary-light);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 4px;
-}
-
-.usageText {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    line-height: 1.4;
-    margin: 0;
-}
-
-.usageText code {
-    background: var(--bg-primary);
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--accent-primary-light);
-}
-
 
 .scanningOverlay {
     display: flex;
