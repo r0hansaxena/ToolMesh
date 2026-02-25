@@ -183,66 +183,60 @@
     font-size: 1rem;
 }
 
-.platformSelector {
-    display: flex;
-    gap: 0;
+/* === OS Selection Bar === */
+.osBar {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(12, 12, 18, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 100px;
+    padding: 10px 100px 10px 16px;
     margin-bottom: var(--space-lg);
-    background: var(--bg-primary);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 3px;
-    overflow: hidden;
+    max-width: 100%;
 }
 
-.platformItem {
-    flex: 1;
+.osLabel {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 12px;
     font-size: 0.8rem;
     font-weight: 500;
-    border-radius: calc(var(--radius-lg) - 2px);
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+    color: rgba(255, 255, 255, 0.25);
+    margin-right: 6px;
+    user-select: none;
+    flex-shrink: 0;
+    line-height: 1;
+    /* Match button border height to maintain vertical center */
+    border: 1.5px solid transparent;
 }
 
-.platformItem:hover {
-    color: var(--text-secondary);
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.platformActive {
-    background: rgba(124, 58, 237, 0.12);
-    border-color: rgba(124, 58, 237, 0.3);
-    color: var(--accent-primary-light);
-    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15);
-}
-
-.platformActive:hover {
-    background: rgba(124, 58, 237, 0.15);
-    color: var(--accent-primary-light);
-}
-
-.platformIcon {
+.osBtn {
     display: flex;
     align-items: center;
-    justify-content: center;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
+    padding: 4px 11px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
+    background: none;
+    border: 1.5px solid transparent;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    line-height: 1;
+    white-space: nowrap;
 }
 
-.platformActive .platformIcon {
-    opacity: 1;
+.osBtn:hover {
+    color: rgba(255, 255, 255, 0.65);
 }
 
-.platformName {
-    letter-spacing: 0.01em;
+.osBtnActive {
+    color: rgba(255, 255, 255, 0.9);
+    border-color: #7c3aed;
+}
+
+.osBtnActive:hover {
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .previewHeader {

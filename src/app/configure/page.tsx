@@ -164,7 +164,7 @@ function ConfigureContent() {
 
     // Generate config whenever selection changes
     useEffect(() => {
-        if (selectedToolIds.length === 0) {
+        if (selectedToolIds.length === 0 || platform === 'unknown' || platform === 'mobile') {
             if (config !== null) setConfig(null);
             return;
         }
@@ -223,8 +223,20 @@ function ConfigureContent() {
     };
 
     const clients = [
-        { id: 'claude-desktop' as const, name: 'Claude Desktop', icon: '🤖' },
-        { id: 'cursor' as const, name: 'Cursor', icon: '⚡' },
+        {
+            id: 'claude-desktop' as const, name: 'Claude Desktop', icon: (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4.709 15.955l4.397-10.986c.21-.526.395-.855.632-1.072.238-.218.544-.327.919-.327.374 0 .681.109.919.327.237.217.422.546.632 1.072l4.397 10.986c.285.712.503 1.173.654 1.382.15.21.358.376.622.498a.94.94 0 01-.313.065H16.1c-.502 0-.87-.08-1.103-.24-.233-.16-.443-.457-.63-.893l-.876-2.258H9.566l-.877 2.258c-.186.436-.396.734-.629.893-.233.16-.601.24-1.103.24h-.967a.94.94 0 01-.313-.065c.264-.122.472-.289.623-.498.15-.21.368-.67.653-1.382zm4.33-3.94h4.878L11.478 5.58 9.04 12.014z" />
+                </svg>
+            )
+        },
+        {
+            id: 'cursor' as const, name: 'Cursor', icon: (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5.654 3.015a.75.75 0 0 0-.973.95l6.75 18a.75.75 0 0 0 1.427-.088l1.98-7.14 7.14-1.98a.75.75 0 0 0 .088-1.427l-18-6.75a.75.75 0 0 0-.412-.065Z" />
+                </svg>
+            )
+        },
         { id: 'generic' as const, name: 'Generic MCP', icon: '🔧' },
     ];
 
@@ -253,15 +265,15 @@ function ConfigureContent() {
                     )}
                     {/* Left: Tool Selector */}
                     <div className={styles.selectorPanel}>
-                        <div className={styles.platformSelector}>
+                        <div className={styles.osBar}>
+                            <span className={styles.osLabel}>OS:</span>
                             {(['windows', 'macos', 'linux'] as const).map((p) => (
                                 <button
                                     key={p}
-                                    className={`${styles.platformItem} ${platform === p ? styles.platformActive : ''}`}
-                                    onClick={() => setPlatform(p)}
+                                    className={`${styles.osBtn} ${platform === p ? styles.osBtnActive : ''}`}
+                                    onClick={() => setPlatform(platform === p ? 'unknown' : p)}
                                 >
-                                    <span className={styles.platformIcon}>{OS_ICONS[p]}</span>
-                                    <span className={styles.platformName}>{p === 'macos' ? 'macOS' : p.charAt(0).toUpperCase() + p.slice(1)}</span>
+                                    {p === 'macos' ? 'Macos' : p.charAt(0).toUpperCase() + p.slice(1)}
                                 </button>
                             ))}
                         </div>
@@ -368,6 +380,10 @@ function ConfigureContent() {
                                 </div>
                             ) : config ? (
                                 <pre className={styles.codeContent}>{JSON.stringify(config.config, null, 2)}</pre>
+                            ) : platform === 'unknown' || platform === 'mobile' ? (
+                                <div className={styles.previewEmpty}>
+                                    <p>Select an OS to generate a configuration file.</p>
+                                </div>
                             ) : (
                                 <div className={styles.previewEmpty}>
                                     <p>Select tools from the left panel to generate a configuration file.</p>
@@ -375,7 +391,7 @@ function ConfigureContent() {
                             )}
                         </div>
 
-                        {config && (
+                        {selectedToolIds.length > 0 && (
                             <div className={styles.selectedSummary}>
                                 <div className={styles.summaryHeader}>
                                     <span className={styles.summaryLabel}>Selected Tools</span>
