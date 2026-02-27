@@ -56,6 +56,39 @@ export class CortensorOracle {
                 walletAddress: 'cort1s0a2u...v4',
                 stakedAmount: 60000,
                 version: 'v2.1.0'
+            },
+            {
+                id: 'node-epsilon-live',
+                name: 'Epsilon-EU-Central (Validator)',
+                region: 'EU-Central',
+                reliability: 0.99,
+                latency: 68,
+                publicKey: '0xmno345c78...',
+                walletAddress: 'cort1t1b3w...v5',
+                stakedAmount: 90000,
+                version: 'v2.1.0'
+            },
+            {
+                id: 'node-zeta-live',
+                name: 'Zeta-SA-East (Validator)',
+                region: 'SA-East',
+                reliability: 0.93,
+                latency: 145,
+                publicKey: '0xpqr678d90...',
+                walletAddress: 'cort1u2c4x...v6',
+                stakedAmount: 45000,
+                version: 'v2.0.9'
+            },
+            {
+                id: 'node-eta-live',
+                name: 'Eta-AU-East (Validator)',
+                region: 'AU-East',
+                reliability: 0.95,
+                latency: 160,
+                publicKey: '0xstu901e12...',
+                walletAddress: 'cort1v3d5y...v7',
+                stakedAmount: 55000,
+                version: 'v2.1.0'
             }
         ];
     }
