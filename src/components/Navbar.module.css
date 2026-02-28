@@ -20,7 +20,12 @@
 .logo {
     display: flex;
     align-items: center;
+    gap: 12px;
     text-decoration: none;
+}
+
+.logoImage {
+    object-fit: contain;
 }
 
 .logoText {

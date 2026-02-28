@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from './Navbar.module.css';
 
@@ -11,6 +12,7 @@ export default function Navbar() {
         <nav className={styles.nav}>
             <div className={styles.inner}>
                 <Link href="/" className={styles.logo}>
+                    <Image src="/logo.png" alt="ToolMesh Logo" width={52} height={52} className={styles.logoImage} />
                     <span className={styles.logoText}>ToolMesh</span>
                 </Link>
 
