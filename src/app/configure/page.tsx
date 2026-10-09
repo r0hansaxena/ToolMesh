@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { FILESYSTEM_PATH_PLACEHOLDER } from '@/lib/types';
 import styles from './page.module.css';
 
 interface ToolInfo {
@@ -156,7 +157,7 @@ function ConfigureContent() {
 
     useEffect(() => {
         if (platform === 'windows' || platform === 'macos' || platform === 'linux') {
-            setFilesystemPath('<ENTER_DIRECTORY_PATH>');
+            setFilesystemPath(FILESYSTEM_PATH_PLACEHOLDER);
         } else {
             setFilesystemPath('');
         }

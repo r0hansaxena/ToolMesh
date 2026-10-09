@@ -1,4 +1,4 @@
-import { McpTool } from './types';
+import { McpTool, FILESYSTEM_PATH_PLACEHOLDER } from './types';
 
 interface ToolRequirement {
     packageName: string;
@@ -85,7 +85,7 @@ export class LiveContentScraper {
         },
         'live-filesystem': {
             packageName: '@modelcontextprotocol/server-filesystem',
-            args: ['<ENTER_ABSOLUTE_PATH_TO_DIRECTORY>']
+            args: [FILESYSTEM_PATH_PLACEHOLDER]
         },
         'live-postgres': {
             packageName: '@modelcontextprotocol/server-postgres',
@@ -360,7 +360,7 @@ export class LiveContentScraper {
                 installCommand: 'npx -y @modelcontextprotocol/server-filesystem',
                 configSnippet: {
                     command: 'npx',
-                    args: ['-y', '@modelcontextprotocol/server-filesystem', '<ENTER_DIRECTORY_PATH>']
+                    args: ['-y', '@modelcontextprotocol/server-filesystem', FILESYSTEM_PATH_PLACEHOLDER]
                 },
                 tags: ['files', 'local', 'system'],
                 stars: 980,

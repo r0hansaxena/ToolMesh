@@ -1,4 +1,4 @@
-import { McpTool, ConfigOutput } from './types';
+import { McpTool, ConfigOutput, FILESYSTEM_PATH_PLACEHOLDER } from './types';
 
 export type Platform = 'windows' | 'macos' | 'linux' | 'mobile' | 'unknown';
 
@@ -28,14 +28,14 @@ export function generateConfig(
                     configSnippet.args = [];
                 }
 
-                const defaultPath = '<ENTER_DIRECTORY_PATH>';
+                const defaultPath = FILESYSTEM_PATH_PLACEHOLDER;
 
                 const finalPath = options.filesystemPath || defaultPath;
 
                 let hasPath = false;
                 configSnippet.args = configSnippet.args.map((arg: string) => {
                     const argStr = String(arg);
-                    if (argStr === '<PATH_TO_FILES_DIR>' || argStr === '<ENTER_DIRECTORY_PATH>' || argStr === 'C:/' || argStr === '~/') {
+                    if (argStr === '<PATH_TO_FILES_DIR>' || argStr === FILESYSTEM_PATH_PLACEHOLDER || argStr === 'C:/' || argStr === '~/') {
                         hasPath = true;
                         return finalPath;
                     }

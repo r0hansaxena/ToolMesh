@@ -64,3 +64,5 @@ export interface ConfigOutput {
   config: Record<string, unknown>;
   tools: McpTool[];
 }
+
+export const FILESYSTEM_PATH_PLACEHOLDER = '<ENTER_DIRECTORY_PATH>';
